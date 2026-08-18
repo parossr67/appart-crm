@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appart CRM</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #0f172a; color: #f1f5f9; }
+    .header { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 16px; position: sticky; top: 0; z-index: 50; }
+    .header-content { max-width: 1200px; margin: 0 auto; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .header-top h1 { font-size: 24px; font-weight: bold; }
+    .btn-filter { padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-filter.active { background: #b45309; color: white; }
+    .btn-filter.inactive { background: #1e293b; color: #cbd5e1; }
+    .btn-filter.inactive:hover { background: #334155; }
+    .main-content { max-width: 1200px; margin: 0 auto; padding: 24px 16px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
+    @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
+    .list-apparts { display: flex; flex-direction: column; gap: 8px; }
+    .appart-btn { text-align: left; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; background: #1e293b; color: #f1f5f9; cursor: pointer; transition: all 0.2s; }
+    .appart-btn:hover { border-color: #475569; }
+    .appart-btn.selected { background: #1e293b; border-color: #d97706; }
+    .appart-btn-title { font-weight: 600; font-size: 14px; }
+    .appart-btn-info { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+    .appart-btn-score { font-size: 14px; font-weight: bold; color: #fbbf24; }
+    .detail-card { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; }
+    .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .detail-title h2 { font-size: 24px; font-weight: bold; margin-bottom: 4px; }
+    .detail-title p { font-size: 14px; color: #94a3b8; }
+    .score-big { font-size: 32px; font-weight: bold; color: #fbbf24; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; background: #0f172a; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+    .stat-item { text-align: center; }
+    .stat-label { font-size: 12px; color: #64748b; }
+    .stat-value { font-weight: bold; margin-top: 4px; }
+    .notes-section { font-size: 14px; color: #cbd5e1; margin-bottom: 16px; }
+    .divider { border-top: 1px solid #1e293b; margin: 16px 0; }
+    .calls-section h3 { font-size: 16px; font-weight: bold; margin-bottom: 16px; }
+    .calls-list { max-height: 192px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .call-item { background: #0f172a; border-radius: 6px; padding: 12px; font-size: 14px; }
+    .call-date { font-family: monospace; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
+    .call-note { color: #e2e8f0; margin-top: 8px; }
+    .call-relance { font-size: 12px; color: #64748b; margin-top: 8px; }
+    .add-call-section { background: #0f172a; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .add-call-section h4 { font-weight: 600; font-size: 14px; }
+    input[type="date"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
+    input[type="date"]:focus, textarea:focus { outline: none; border-color: #d97706; }
+    textarea { resize: vertical; min-height: 60px; }
+    .btn-save { width: 100%; background: #d97706; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .btn-save:hover:not(:disabled) { background: #b45309; }
+    .btn-save:disabled { background: #1e293b; cursor: not-allowed; opacity: 0.5; }
+    .empty-state { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; text-align: center; color: #64748b; }
+    .btn-delete { background: none; border: none; color: #64748b; cursor: pointer; padding: 4px; font-size: 14px; }
+    .btn-delete:hover { background: #0f172a; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function AppartCRM() {
+      const [apparts, setApparts] = useState([]);
+      const [selectedAppart, setSelectedAppart] = useState(null);
+      const [newCall, setNewCall] = useState({ date: '', note: '', relanceDate: '' });
+      const [filterRelance, setFilterRelance] = useState(false);
+
+      const initData = [
+        { id: 1, rank: '🥇', name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [] },
+        { id: 2, rank: '🥈', name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable, garage, cave, à rénover', calls: [] },
+        { id: 3, rank: '🥉', name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Particulier, emplacement top Airbnb, négo 185-190k', calls: [] },
+        { id: 4, rank: '4', name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable, petit levier travaux', calls: [] },
+        { id: 5, rank: '5', name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb mais petit, prix/m² élevé', calls: [] },
+        { id: 6, rank: '6', name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle, DPE C, travaux possibles', calls: [] },
+        { id: 7, rank: '7', name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A, parking, terrasse', calls: [] },
+        { id: 8, rank: '8', name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Entièrement rénové = zéro levier travaux', calls: [] },
+        { id: 9, rank: '9', name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové, DPE D/GES B, garage', calls: [] },
+        { id: 10, rank: '10', name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Copro en cours = risque juridique réel', calls: [] },
+        { id: 11, rank: '11', name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E = risque réglementaire inlouable 2034', calls: [] },
+        { id: 12, rank: '12', name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: '4e sans ascenseur = éliminatoire pour revente', calls: [] },
+        { id: 13, rank: '13', name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'DPE C/B excellent mais quartier trop excentré', calls: [] },
+        { id: 14, rank: '14', name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit, zéro potentiel', calls: [] },
+        { id: 15, rank: '15', name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher, DPE E', calls: [] },
+        { id: 16, rank: '16', name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Trop cher pour la surface', calls: [] },
+        { id: 17, rank: '17', name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [] },
+        { id: 18, rank: '18', name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Hors budget, peu de levier', calls: [] },
+      ];
+
+      useEffect(() => {
+        const saved = localStorage.getItem('apparts');
+        setApparts(saved ? JSON.parse(saved) : initData);
+      }, []);
+
+      useEffect(() => {
+        if (apparts.length > 0) localStorage.setItem('apparts', JSON.stringify(apparts));
+      }, [apparts]);
+
+      const handleAddCall = () => {
+        if (!selectedAppart || !newCall.note || !newCall.date) return;
+        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, calls: [...a.calls, newCall] } : a);
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        setNewCall({ date: '', note: '', relanceDate: '' });
+      };
+
+      const handleDeleteCall = (idx) => {
+        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, calls: a.calls.filter((_, i) => i !== idx) } : a);
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+      };
+
+      const getRelanceThisWeek = () => {
+        const today = new Date();
+        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+        return apparts.filter(a => a.calls.some(call => {
+          const d = new Date(call.relanceDate);
+          return d >= today && d <= nextWeek;
+        }));
+      };
+
+      const displayApparts = filterRelance ? getRelanceThisWeek() : apparts;
+
+      return (
+        <div style={{ minHeight: '100vh', background: '#0f172a' }}>
+          <div className="header">
+            <div className="header-content">
+              <div className="header-top">
+                <h1>Appart CRM</h1>
+                <button className={`btn-filter ${filterRelance ? 'active' : 'inactive'}`} onClick={() => setFilterRelance(!filterRelance)}>
+                  {filterRelance ? '📅 À relancer cette semaine' : 'Tous les apparts'}
+                </button>
+              </div>
+              {filterRelance && <p style={{ fontSize: '12px', color: '#94a3b8' }}>{getRelanceThisWeek().length} appart(s) à relancer</p>}
+            </div>
+          </div>
+          <div className="main-content">
+            <div className="list-apparts">
+              {displayApparts.map(appart => (
+                <button key={appart.id} className={`appart-btn ${selectedAppart?.id === appart.id ? 'selected' : ''}`} onClick={() => setSelectedAppart(appart)}>
+                  <div className="appart-btn-title">{appart.rank} {appart.name}</div>
+                  <div className="appart-btn-info">{appart.price.toLocaleString()}€ • {appart.surface}m²</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+                    {appart.calls.length > 0 && <span style={{ fontSize: '12px', color: '#64748b' }}>📞 {appart.calls.length}</span>}
+                    <span className="appart-btn-score">{appart.score}/10</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div>
+              {selectedAppart ? (
+                <div className="detail-card">
+                  <div className="detail-header">
+                    <div className="detail-title">
+                      <h2>{selectedAppart.rank} {selectedAppart.name}</h2>
+                      <p>{selectedAppart.location}</p>
+                    </div>
+                    <div className="score-big">{selectedAppart.score}/10</div>
+                  </div>
+                  <div className="stats-grid">
+                    <div className="stat-item"><div className="stat-label">Prix</div><div className="stat-value">{selectedAppart.price.toLocaleString()}€</div></div>
+                    <div className="stat-item"><div className="stat-label">Surface</div><div className="stat-value">{selectedAppart.surface}m²</div></div>
+                    <div className="stat-item"><div className="stat-label">Prix/m²</div><div className="stat-value">{Math.round(selectedAppart.price / selectedAppart.surface).toLocaleString()}€</div></div>
+                  </div>
+                  <div className="notes-section"><strong>Notes:</strong> {selectedAppart.notes}</div>
+                  <div className="divider"></div>
+                  <div className="calls-section">
+                    <h3>Historique appels</h3>
+                    {selectedAppart.calls.length === 0 ? (
+                      <p style={{ fontSize: '12px', color: '#64748b' }}>Aucun appel enregistré</p>
+                    ) : (
+                      <div className="calls-list">
+                        {selectedAppart.calls.map((call, idx) => (
+                          <div key={idx} className="call-item">
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <div className="call-date">📞 {new Date(call.date).toLocaleDateString('fr-FR')}</div>
+                              <button className="btn-delete" onClick={() => handleDeleteCall(idx)}>✕</button>
+                            </div>
+                            <div className="call-note">{call.note}</div>
+                            {call.relanceDate && <div className="call-relance">📅 Relancer: {new Date(call.relanceDate).toLocaleDateString('fr-FR')}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="add-call-section">
+                      <h4>Ajouter un appel</h4>
+                      <input type="date" value={newCall.date} onChange={(e) => setNewCall({ ...newCall, date: e.target.value })} />
+                      <textarea value={newCall.note} onChange={(e) => setNewCall({ ...newCall, note: e.target.value })} placeholder="Note rapide (ex: demande rappel semaine pro, pas intéressé...)" />
+                      <input type="date" value={newCall.relanceDate} onChange={(e) => setNewCall({ ...newCall, relanceDate: e.target.value })} placeholder="Date relance (optionnel)" />
+                      <button className="btn-save" disabled={!newCall.note || !newCall.date} onClick={handleAddCall}>+ Enregistrer</button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="empty-state"><p>Sélectionne un appart pour voir les détails</p></div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<AppartCRM />);
+  </script>
+</body>
+</html>
