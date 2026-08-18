@@ -24,9 +24,13 @@
     .calendar-day-label { text-align: center; font-size: 11px; color: #64748b; padding: 4px; font-weight: 600; }
     .calendar-day { text-align: center; padding: 8px 4px; font-size: 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
     .calendar-day.empty { background: transparent; }
-    .calendar-day.other-month { color: #475569; }
     .calendar-day.has-event { background: #d97706; color: white; font-weight: bold; }
     .calendar-day.today { background: #334155; border: 1px solid #d97706; }
+    .calendar-day.clickable:hover { background: #334155; }
+    .daily-visits { background: #1e293b; border-radius: 6px; padding: 12px; margin-bottom: 16px; }
+    .daily-visits h4 { font-weight: 600; margin-bottom: 8px; color: #fbbf24; }
+    .visit-item { background: #0f172a; padding: 8px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
+    .visit-time { color: #fbbf24; font-weight: 600; }
     .main-content { max-width: 1200px; margin: 0 auto; padding: 24px 16px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
     @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
     .list-apparts { display: flex; flex-direction: column; gap: 8px; }
@@ -36,7 +40,7 @@
     .appart-btn-title { font-weight: 600; font-size: 14px; }
     .appart-btn-info { font-size: 12px; color: #94a3b8; margin-top: 4px; }
     .appart-btn-score { font-size: 14px; font-weight: bold; color: #fbbf24; }
-    .detail-card { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; }
+    .detail-card { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; overflow-y: auto; max-height: 85vh; }
     .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
     .detail-title h2 { font-size: 24px; font-weight: bold; margin-bottom: 4px; }
     .detail-title p { font-size: 14px; color: #94a3b8; }
@@ -47,16 +51,21 @@
     .stat-value { font-weight: bold; margin-top: 4px; }
     .notes-section { font-size: 14px; color: #cbd5e1; margin-bottom: 16px; }
     .divider { border-top: 1px solid #1e293b; margin: 16px 0; }
+    .section-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; }
+    .visits-list { max-height: 120px; overflow-y: auto; margin-bottom: 12px; }
+    .visit-card { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
+    .visit-card-time { color: #fbbf24; font-weight: 600; }
+    .visit-card-appart { color: #cbd5e1; }
+    .add-visit-section { background: #0f172a; border-radius: 6px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .add-visit-section h4 { font-weight: 600; font-size: 13px; }
     .calls-section h3 { font-size: 16px; font-weight: bold; margin-bottom: 16px; }
     .calls-list { max-height: 192px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
     .call-item { background: #0f172a; border-radius: 6px; padding: 12px; font-size: 14px; }
     .call-date { font-family: monospace; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
     .call-note { color: #e2e8f0; margin-top: 8px; }
-    .call-relance { font-size: 12px; color: #64748b; margin-top: 8px; }
     .add-call-section { background: #0f172a; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    .add-call-section h4 { font-weight: 600; font-size: 14px; }
-    input[type="date"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
-    input[type="date"]:focus, textarea:focus { outline: none; border-color: #d97706; }
+    input[type="date"], input[type="time"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
+    input[type="date"]:focus, input[type="time"]:focus, textarea:focus { outline: none; border-color: #d97706; }
     textarea { resize: vertical; min-height: 60px; }
     .btn-save { width: 100%; background: #d97706; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
     .btn-save:hover:not(:disabled) { background: #b45309; }
@@ -71,7 +80,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    function Calendar({ events }) {
+    function Calendar({ events, onDateClick, selectedDate }) {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -94,7 +103,11 @@
           <div className="calendar-grid">
             {dayLabels.map(label => <div key={label} className="calendar-day-label">{label}</div>)}
             {days.map((day, idx) => (
-              <div key={idx} className={`calendar-day ${day === null ? 'empty' : eventDates.includes(day) ? 'has-event' : day === today.getDate() ? 'today' : ''}`}>
+              <div 
+                key={idx} 
+                className={`calendar-day ${day === null ? 'empty' : eventDates.includes(day) ? 'has-event clickable' : day === today.getDate() ? 'today clickable' : 'clickable'}`}
+                onClick={() => day !== null && onDateClick(new Date(year, month, day).toISOString().split('T')[0])}
+              >
                 {day}
               </div>
             ))}
@@ -107,27 +120,29 @@
       const [apparts, setApparts] = useState([]);
       const [selectedAppart, setSelectedAppart] = useState(null);
       const [newCall, setNewCall] = useState({ date: '', note: '', relanceDate: '' });
+      const [newVisit, setNewVisit] = useState({ date: '', time: '' });
       const [filterRelance, setFilterRelance] = useState(false);
+      const [selectedDateForVisits, setSelectedDateForVisits] = useState(null);
 
       const initData = [
-        { id: 1, rank: '🥇', name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [] },
-        { id: 2, rank: '🥈', name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable, garage, cave, à rénover', calls: [] },
-        { id: 3, rank: '🥉', name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Particulier, emplacement top Airbnb, négo 185-190k', calls: [] },
-        { id: 4, rank: '4', name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable, petit levier travaux', calls: [] },
-        { id: 5, rank: '5', name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb mais petit, prix/m² élevé', calls: [] },
-        { id: 6, rank: '6', name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle, DPE C, travaux possibles', calls: [] },
-        { id: 7, rank: '7', name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A, parking, terrasse', calls: [] },
-        { id: 8, rank: '8', name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Entièrement rénové = zéro levier travaux', calls: [] },
-        { id: 9, rank: '9', name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové, DPE D/GES B, garage', calls: [] },
-        { id: 10, rank: '10', name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Copro en cours = risque juridique réel', calls: [] },
-        { id: 11, rank: '11', name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E = risque réglementaire inlouable 2034', calls: [] },
-        { id: 12, rank: '12', name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: '4e sans ascenseur = éliminatoire pour revente', calls: [] },
-        { id: 13, rank: '13', name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'DPE C/B excellent mais quartier trop excentré', calls: [] },
-        { id: 14, rank: '14', name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit, zéro potentiel', calls: [] },
-        { id: 15, rank: '15', name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher, DPE E', calls: [] },
-        { id: 16, rank: '16', name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Trop cher pour la surface', calls: [] },
-        { id: 17, rank: '17', name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [] },
-        { id: 18, rank: '18', name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Hors budget, peu de levier', calls: [] },
+        { id: 1, rank: '🥇', name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [], visits: [] },
+        { id: 2, rank: '🥈', name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable, garage, cave, à rénover', calls: [], visits: [] },
+        { id: 3, rank: '🥉', name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Particulier, emplacement top Airbnb, négo 185-190k', calls: [], visits: [] },
+        { id: 4, rank: '4', name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable, petit levier travaux', calls: [], visits: [] },
+        { id: 5, rank: '5', name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb mais petit, prix/m² élevé', calls: [], visits: [] },
+        { id: 6, rank: '6', name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle, DPE C, travaux possibles', calls: [], visits: [] },
+        { id: 7, rank: '7', name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A, parking, terrasse', calls: [], visits: [] },
+        { id: 8, rank: '8', name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Entièrement rénové = zéro levier travaux', calls: [], visits: [] },
+        { id: 9, rank: '9', name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové, DPE D/GES B, garage', calls: [], visits: [] },
+        { id: 10, rank: '10', name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Copro en cours = risque juridique réel', calls: [], visits: [] },
+        { id: 11, rank: '11', name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E = risque réglementaire inlouable 2034', calls: [], visits: [] },
+        { id: 12, rank: '12', name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: '4e sans ascenseur = éliminatoire pour revente', calls: [], visits: [] },
+        { id: 13, rank: '13', name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'DPE C/B excellent mais quartier trop excentré', calls: [], visits: [] },
+        { id: 14, rank: '14', name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit, zéro potentiel', calls: [], visits: [] },
+        { id: 15, rank: '15', name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher, DPE E', calls: [], visits: [] },
+        { id: 16, rank: '16', name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Trop cher pour la surface', calls: [], visits: [] },
+        { id: 17, rank: '17', name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [], visits: [] },
+        { id: 18, rank: '18', name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Hors budget, peu de levier', calls: [], visits: [] },
       ];
 
       useEffect(() => {
@@ -153,27 +168,49 @@
         setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
       };
 
-      const getRelanceThisWeek = () => {
-        const today = new Date();
-        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        return apparts.filter(a => a.calls.some(call => {
-          const d = new Date(call.relanceDate);
-          return d >= today && d <= nextWeek;
-        }));
+      const handleAddVisit = () => {
+        if (!selectedAppart || !newVisit.date || !newVisit.time) return;
+        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, visits: [...a.visits, newVisit] } : a);
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        setNewVisit({ date: '', time: '' });
+      };
+
+      const handleDeleteVisit = (idx) => {
+        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, visits: a.visits.filter((_, i) => i !== idx) } : a);
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+      };
+
+      const getVisitsForDate = (date) => {
+        const visits = [];
+        apparts.forEach(a => {
+          a.visits.forEach(v => {
+            if (v.date === date) visits.push({ ...v, apartName: a.name, apartRank: a.rank });
+          });
+        });
+        return visits.sort((a, b) => a.time.localeCompare(b.time));
       };
 
       const getAllEventDates = () => {
         const dates = [];
         apparts.forEach(a => {
+          a.visits.forEach(v => dates.push(v.date));
           a.calls.forEach(call => {
             if (call.relanceDate) dates.push(call.relanceDate);
-            if (call.date) dates.push(call.date);
           });
         });
         return dates;
       };
 
-      const displayApparts = filterRelance ? getRelanceThisWeek() : apparts;
+      const displayApparts = filterRelance ? apparts.filter(a => a.calls.some(call => {
+        const d = new Date(call.relanceDate);
+        const today = new Date();
+        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+        return d >= today && d <= nextWeek;
+      })) : apparts;
+
+      const visitsToday = selectedDateForVisits ? getVisitsForDate(selectedDateForVisits) : [];
 
       return (
         <div style={{ minHeight: '100vh', background: '#0f172a' }}>
@@ -185,19 +222,32 @@
                   {filterRelance ? '📅 À relancer cette semaine' : 'Tous les apparts'}
                 </button>
               </div>
-              {filterRelance && <p style={{ fontSize: '12px', color: '#94a3b8' }}>{getRelanceThisWeek().length} appart(s) à relancer</p>}
             </div>
           </div>
           <div className="main-content">
             <div>
-              <Calendar events={getAllEventDates()} />
+              <Calendar events={getAllEventDates()} onDateClick={setSelectedDateForVisits} selectedDate={selectedDateForVisits} />
+              {selectedDateForVisits && visitsToday.length > 0 && (
+                <div className="daily-visits">
+                  <h4>📅 Visites du {new Date(selectedDateForVisits).toLocaleDateString('fr-FR')}</h4>
+                  {visitsToday.map((v, idx) => (
+                    <div key={idx} className="visit-item">
+                      <span className="visit-time">{v.time}</span> - {v.apartRank} {v.apartName}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="list-apparts">
                 {displayApparts.map(appart => (
                   <button key={appart.id} className={`appart-btn ${selectedAppart?.id === appart.id ? 'selected' : ''}`} onClick={() => setSelectedAppart(appart)}>
                     <div className="appart-btn-title">{appart.rank} {appart.name}</div>
                     <div className="appart-btn-info">{appart.price.toLocaleString()}€ • {appart.surface}m²</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                      {appart.calls.length > 0 && <span style={{ fontSize: '12px', color: '#64748b' }}>📞 {appart.calls.length}</span>}
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>
+                        {appart.visits.length > 0 && `📍 ${appart.visits.length}`}
+                        {appart.visits.length > 0 && appart.calls.length > 0 && ' | '}
+                        {appart.calls.length > 0 && `📞 ${appart.calls.length}`}
+                      </span>
                       <span className="appart-btn-score">{appart.score}/10</span>
                     </div>
                   </button>
@@ -221,10 +271,33 @@
                   </div>
                   <div className="notes-section"><strong>Notes:</strong> {selectedAppart.notes}</div>
                   <div className="divider"></div>
+                  
+                  <div className="section-title">📍 Visites prévues</div>
+                  {selectedAppart.visits.length === 0 ? (
+                    <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Aucune visite</p>
+                  ) : (
+                    <div className="visits-list">
+                      {selectedAppart.visits.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).map((v, idx) => (
+                        <div key={idx} className="visit-card">
+                          <div className="visit-card-time">{v.time}</div>
+                          <div className="visit-card-appart">{new Date(v.date).toLocaleDateString('fr-FR')}</div>
+                          <button className="btn-delete" onClick={() => handleDeleteVisit(idx)}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="add-visit-section">
+                    <h4>Ajouter une visite</h4>
+                    <input type="date" value={newVisit.date} onChange={(e) => setNewVisit({ ...newVisit, date: e.target.value })} />
+                    <input type="time" value={newVisit.time} onChange={(e) => setNewVisit({ ...newVisit, time: e.target.value })} />
+                    <button className="btn-save" disabled={!newVisit.date || !newVisit.time} onClick={handleAddVisit}>+ Ajouter visite</button>
+                  </div>
+
+                  <div className="divider"></div>
                   <div className="calls-section">
                     <h3>Historique appels</h3>
                     {selectedAppart.calls.length === 0 ? (
-                      <p style={{ fontSize: '12px', color: '#64748b' }}>Aucun appel enregistré</p>
+                      <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>Aucun appel enregistré</p>
                     ) : (
                       <div className="calls-list">
                         {selectedAppart.calls.map((call, idx) => (
@@ -234,7 +307,7 @@
                               <button className="btn-delete" onClick={() => handleDeleteCall(idx)}>✕</button>
                             </div>
                             <div className="call-note">{call.note}</div>
-                            {call.relanceDate && <div className="call-relance">📅 Relancer: {new Date(call.relanceDate).toLocaleDateString('fr-FR')}</div>}
+                            {call.relanceDate && <div style={{ fontSize: '12px', color: '#64748b', marginTop: '8px' }}>📅 Relancer: {new Date(call.relanceDate).toLocaleDateString('fr-FR')}</div>}
                           </div>
                         ))}
                       </div>
@@ -244,7 +317,7 @@
                       <input type="date" value={newCall.date} onChange={(e) => setNewCall({ ...newCall, date: e.target.value })} />
                       <textarea value={newCall.note} onChange={(e) => setNewCall({ ...newCall, note: e.target.value })} placeholder="Note rapide (ex: demande rappel semaine pro, pas intéressé...)" />
                       <input type="date" value={newCall.relanceDate} onChange={(e) => setNewCall({ ...newCall, relanceDate: e.target.value })} placeholder="Date relance (optionnel)" />
-                      <button className="btn-save" disabled={!newCall.note || !newCall.date} onClick={handleAddCall}>+ Enregistrer</button>
+                      <button className="btn-save" disabled={!newCall.note || !newCall.date} onClick={handleAddCall}>+ Enregistrer appel</button>
                     </div>
                   </div>
                 </div>
