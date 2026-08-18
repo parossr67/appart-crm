@@ -17,7 +17,6 @@
     .btn-filter { padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; }
     .btn-filter.active { background: #b45309; color: white; }
     .btn-filter.inactive { background: #1e293b; color: #cbd5e1; }
-    .btn-filter.inactive:hover { background: #334155; }
     .calendar-container { background: #1e293b; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
     .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -35,8 +34,7 @@
     @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
     .list-apparts { display: flex; flex-direction: column; gap: 8px; }
     .appart-btn { text-align: left; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; background: #1e293b; color: #f1f5f9; cursor: pointer; transition: all 0.2s; }
-    .appart-btn:hover { border-color: #475569; }
-    .appart-btn.selected { background: #1e293b; border-color: #d97706; }
+    .appart-btn.selected { border-color: #d97706; }
     .appart-btn-title { font-weight: 600; font-size: 14px; }
     .appart-btn-info { font-size: 12px; color: #94a3b8; margin-top: 4px; }
     .appart-btn-score { font-size: 14px; font-weight: bold; color: #fbbf24; }
@@ -49,21 +47,18 @@
     .stat-item { text-align: center; }
     .stat-label { font-size: 12px; color: #64748b; }
     .stat-value { font-weight: bold; margin-top: 4px; }
-    .notes-section { font-size: 14px; color: #cbd5e1; margin-bottom: 16px; }
-    .divider { border-top: 1px solid #1e293b; margin: 16px 0; }
-    .section-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; }
-    .visits-list { max-height: 120px; overflow-y: auto; margin-bottom: 12px; }
-    .visit-card { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
+    .section-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; margin-top: 16px; }
+    .section-title:first-of-type { margin-top: 0; }
+    .visits-list { max-height: 150px; overflow-y: auto; margin-bottom: 12px; }
+    .visit-card { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .visit-info { flex: 1; }
     .visit-card-time { color: #fbbf24; font-weight: 600; }
-    .visit-card-appart { color: #cbd5e1; }
-    .add-visit-section { background: #0f172a; border-radius: 6px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
-    .add-visit-section h4 { font-weight: 600; font-size: 13px; }
-    .calls-section h3 { font-size: 16px; font-weight: bold; margin-bottom: 16px; }
+    .add-section { background: #0f172a; border-radius: 6px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .add-section h4 { font-weight: 600; font-size: 13px; }
     .calls-list { max-height: 192px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
     .call-item { background: #0f172a; border-radius: 6px; padding: 12px; font-size: 14px; }
     .call-date { font-family: monospace; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
     .call-note { color: #e2e8f0; margin-top: 8px; }
-    .add-call-section { background: #0f172a; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
     input[type="date"], input[type="time"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
     input[type="date"]:focus, input[type="time"]:focus, textarea:focus { outline: none; border-color: #d97706; }
     textarea { resize: vertical; min-height: 60px; }
@@ -73,6 +68,7 @@
     .empty-state { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; text-align: center; color: #64748b; }
     .btn-delete { background: none; border: none; color: #64748b; cursor: pointer; padding: 4px; font-size: 14px; }
     .btn-delete:hover { background: #0f172a; border-radius: 4px; }
+    .divider { border-top: 1px solid #1e293b; margin: 16px 0; }
   </style>
 </head>
 <body>
@@ -80,7 +76,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    function Calendar({ events, onDateClick, selectedDate }) {
+    function Calendar({ events, onDateClick }) {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -147,70 +143,85 @@
 
       useEffect(() => {
         const saved = localStorage.getItem('apparts');
-        setApparts(saved ? JSON.parse(saved) : initData);
+        if (saved) {
+          const data = JSON.parse(saved);
+          const fixed = data.map(a => ({ ...a, visits: a.visits || [], calls: a.calls || [] }));
+          setApparts(fixed);
+        } else {
+          setApparts(initData);
+        }
       }, []);
 
       useEffect(() => {
         if (apparts.length > 0) localStorage.setItem('apparts', JSON.stringify(apparts));
       }, [apparts]);
 
-      const handleAddCall = () => {
-        if (!selectedAppart || !newCall.note || !newCall.date) return;
-        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, calls: [...a.calls, newCall] } : a);
-        setApparts(updated);
-        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
-        setNewCall({ date: '', note: '', relanceDate: '' });
-      };
-
-      const handleDeleteCall = (idx) => {
-        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, calls: a.calls.filter((_, i) => i !== idx) } : a);
-        setApparts(updated);
-        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
-      };
-
       const handleAddVisit = () => {
         if (!selectedAppart || !newVisit.date || !newVisit.time) return;
-        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, visits: [...a.visits, newVisit] } : a);
+        const updated = apparts.map(a => 
+          a.id === selectedAppart.id ? { ...a, visits: [...(a.visits || []), newVisit] } : a
+        );
         setApparts(updated);
         setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
         setNewVisit({ date: '', time: '' });
       };
 
       const handleDeleteVisit = (idx) => {
-        const updated = apparts.map(a => a.id === selectedAppart.id ? { ...a, visits: a.visits.filter((_, i) => i !== idx) } : a);
+        const updated = apparts.map(a => 
+          a.id === selectedAppart.id ? { ...a, visits: (a.visits || []).filter((_, i) => i !== idx) } : a
+        );
         setApparts(updated);
         setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+      };
+
+      const handleAddCall = () => {
+        if (!selectedAppart || !newCall.note || !newCall.date) return;
+        const updated = apparts.map(a => 
+          a.id === selectedAppart.id ? { ...a, calls: [...(a.calls || []), newCall] } : a
+        );
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        setNewCall({ date: '', note: '', relanceDate: '' });
+      };
+
+      const handleDeleteCall = (idx) => {
+        const updated = apparts.map(a => 
+          a.id === selectedAppart.id ? { ...a, calls: (a.calls || []).filter((_, i) => i !== idx) } : a
+        );
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+      };
+
+      const getAllEventDates = () => {
+        const dates = [];
+        apparts.forEach(a => {
+          (a.visits || []).forEach(v => dates.push(v.date));
+          (a.calls || []).forEach(c => {
+            if (c.relanceDate) dates.push(c.relanceDate);
+          });
+        });
+        return dates;
       };
 
       const getVisitsForDate = (date) => {
         const visits = [];
         apparts.forEach(a => {
-          a.visits.forEach(v => {
+          (a.visits || []).forEach(v => {
             if (v.date === date) visits.push({ ...v, apartName: a.name, apartRank: a.rank });
           });
         });
         return visits.sort((a, b) => a.time.localeCompare(b.time));
       };
 
-      const getAllEventDates = () => {
-        const dates = [];
-        apparts.forEach(a => {
-          a.visits.forEach(v => dates.push(v.date));
-          a.calls.forEach(call => {
-            if (call.relanceDate) dates.push(call.relanceDate);
-          });
-        });
-        return dates;
-      };
-
-      const displayApparts = filterRelance ? apparts.filter(a => a.calls.some(call => {
-        const d = new Date(call.relanceDate);
-        const today = new Date();
-        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        return d >= today && d <= nextWeek;
-      })) : apparts;
-
       const visitsToday = selectedDateForVisits ? getVisitsForDate(selectedDateForVisits) : [];
+      const displayApparts = filterRelance ? apparts.filter(a => 
+        (a.calls || []).some(call => {
+          const d = new Date(call.relanceDate);
+          const today = new Date();
+          const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+          return d >= today && d <= nextWeek;
+        })
+      ) : apparts;
 
       return (
         <div style={{ minHeight: '100vh', background: '#0f172a' }}>
@@ -226,7 +237,7 @@
           </div>
           <div className="main-content">
             <div>
-              <Calendar events={getAllEventDates()} onDateClick={setSelectedDateForVisits} selectedDate={selectedDateForVisits} />
+              <Calendar events={getAllEventDates()} onDateClick={setSelectedDateForVisits} />
               {selectedDateForVisits && visitsToday.length > 0 && (
                 <div className="daily-visits">
                   <h4>📅 Visites du {new Date(selectedDateForVisits).toLocaleDateString('fr-FR')}</h4>
@@ -244,9 +255,9 @@
                     <div className="appart-btn-info">{appart.price.toLocaleString()}€ • {appart.surface}m²</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
                       <span style={{ fontSize: '12px', color: '#64748b' }}>
-                        {appart.visits.length > 0 && `📍 ${appart.visits.length}`}
-                        {appart.visits.length > 0 && appart.calls.length > 0 && ' | '}
-                        {appart.calls.length > 0 && `📞 ${appart.calls.length}`}
+                        {(appart.visits || []).length > 0 && `📍 ${(appart.visits || []).length}`}
+                        {(appart.visits || []).length > 0 && (appart.calls || []).length > 0 && ' | '}
+                        {(appart.calls || []).length > 0 && `📞 ${(appart.calls || []).length}`}
                       </span>
                       <span className="appart-btn-score">{appart.score}/10</span>
                     </div>
@@ -269,24 +280,25 @@
                     <div className="stat-item"><div className="stat-label">Surface</div><div className="stat-value">{selectedAppart.surface}m²</div></div>
                     <div className="stat-item"><div className="stat-label">Prix/m²</div><div className="stat-value">{Math.round(selectedAppart.price / selectedAppart.surface).toLocaleString()}€</div></div>
                   </div>
-                  <div className="notes-section"><strong>Notes:</strong> {selectedAppart.notes}</div>
-                  <div className="divider"></div>
-                  
+                  <div style={{ fontSize: '14px', color: '#cbd5e1', marginBottom: '16px' }}><strong>Notes:</strong> {selectedAppart.notes}</div>
+
                   <div className="section-title">📍 Visites prévues</div>
-                  {selectedAppart.visits.length === 0 ? (
+                  {(selectedAppart.visits || []).length === 0 ? (
                     <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Aucune visite</p>
                   ) : (
                     <div className="visits-list">
-                      {selectedAppart.visits.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).map((v, idx) => (
+                      {(selectedAppart.visits || []).sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).map((v, idx) => (
                         <div key={idx} className="visit-card">
-                          <div className="visit-card-time">{v.time}</div>
-                          <div className="visit-card-appart">{new Date(v.date).toLocaleDateString('fr-FR')}</div>
+                          <div className="visit-info">
+                            <div className="visit-card-time">{v.time}</div>
+                            <div style={{ fontSize: '12px', color: '#cbd5e1' }}>{new Date(v.date).toLocaleDateString('fr-FR')}</div>
+                          </div>
                           <button className="btn-delete" onClick={() => handleDeleteVisit(idx)}>✕</button>
                         </div>
                       ))}
                     </div>
                   )}
-                  <div className="add-visit-section">
+                  <div className="add-section">
                     <h4>Ajouter une visite</h4>
                     <input type="date" value={newVisit.date} onChange={(e) => setNewVisit({ ...newVisit, date: e.target.value })} />
                     <input type="time" value={newVisit.time} onChange={(e) => setNewVisit({ ...newVisit, time: e.target.value })} />
@@ -294,31 +306,29 @@
                   </div>
 
                   <div className="divider"></div>
-                  <div className="calls-section">
-                    <h3>Historique appels</h3>
-                    {selectedAppart.calls.length === 0 ? (
-                      <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>Aucun appel enregistré</p>
-                    ) : (
-                      <div className="calls-list">
-                        {selectedAppart.calls.map((call, idx) => (
-                          <div key={idx} className="call-item">
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <div className="call-date">📞 {new Date(call.date).toLocaleDateString('fr-FR')}</div>
-                              <button className="btn-delete" onClick={() => handleDeleteCall(idx)}>✕</button>
-                            </div>
-                            <div className="call-note">{call.note}</div>
-                            {call.relanceDate && <div style={{ fontSize: '12px', color: '#64748b', marginTop: '8px' }}>📅 Relancer: {new Date(call.relanceDate).toLocaleDateString('fr-FR')}</div>}
+                  <div className="section-title">📞 Appels</div>
+                  {(selectedAppart.calls || []).length === 0 ? (
+                    <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>Aucun appel</p>
+                  ) : (
+                    <div className="calls-list">
+                      {(selectedAppart.calls || []).map((call, idx) => (
+                        <div key={idx} className="call-item">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                            <div className="call-date">📞 {new Date(call.date).toLocaleDateString('fr-FR')}</div>
+                            <button className="btn-delete" onClick={() => handleDeleteCall(idx)}>✕</button>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="add-call-section">
-                      <h4>Ajouter un appel</h4>
-                      <input type="date" value={newCall.date} onChange={(e) => setNewCall({ ...newCall, date: e.target.value })} />
-                      <textarea value={newCall.note} onChange={(e) => setNewCall({ ...newCall, note: e.target.value })} placeholder="Note rapide (ex: demande rappel semaine pro, pas intéressé...)" />
-                      <input type="date" value={newCall.relanceDate} onChange={(e) => setNewCall({ ...newCall, relanceDate: e.target.value })} placeholder="Date relance (optionnel)" />
-                      <button className="btn-save" disabled={!newCall.note || !newCall.date} onClick={handleAddCall}>+ Enregistrer appel</button>
+                          <div style={{ color: '#e2e8f0', marginBottom: '6px' }}>{call.note}</div>
+                          {call.relanceDate && <div style={{ fontSize: '12px', color: '#64748b' }}>📅 Relancer: {new Date(call.relanceDate).toLocaleDateString('fr-FR')}</div>}
+                        </div>
+                      ))}
                     </div>
+                  )}
+                  <div className="add-section">
+                    <h4>Ajouter un appel</h4>
+                    <input type="date" value={newCall.date} onChange={(e) => setNewCall({ ...newCall, date: e.target.value })} />
+                    <textarea value={newCall.note} onChange={(e) => setNewCall({ ...newCall, note: e.target.value })} placeholder="Note rapide (ex: demande rappel semaine pro, pas intéressé...)" />
+                    <input type="date" value={newCall.relanceDate} onChange={(e) => setNewCall({ ...newCall, relanceDate: e.target.value })} />
+                    <button className="btn-save" disabled={!newCall.note || !newCall.date} onClick={handleAddCall}>+ Enregistrer appel</button>
                   </div>
                 </div>
               ) : (
