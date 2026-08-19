@@ -46,6 +46,8 @@
     .detail-title h2 { font-size: 24px; font-weight: bold; margin-bottom: 4px; }
     .detail-title p { font-size: 14px; color: #94a3b8; }
     .score-big { font-size: 32px; font-weight: bold; color: #fbbf24; }
+    .btn-delete-appart { background: #dc2626; color: white; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .btn-delete-appart:hover { background: #991b1b; }
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; background: #0f172a; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
     .stat-item { text-align: center; }
     .stat-label { font-size: 12px; color: #64748b; }
@@ -132,34 +134,46 @@
       const [newAppart, setNewAppart] = useState({ name: '', price: '', surface: '', location: '', score: '' });
 
       const initData = [
-        { id: 1, rank: '🥇', name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [], visits: [] },
-        { id: 2, rank: '🥈', name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable, garage, cave, à rénover', calls: [], visits: [] },
-        { id: 3, rank: '🥉', name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Particulier, emplacement top Airbnb, négo 185-190k', calls: [], visits: [] },
-        { id: 4, rank: '4', name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable, petit levier travaux', calls: [], visits: [] },
-        { id: 5, rank: '5', name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb mais petit, prix/m² élevé', calls: [], visits: [] },
-        { id: 6, rank: '6', name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle, DPE C, travaux possibles', calls: [], visits: [] },
-        { id: 7, rank: '7', name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A, parking, terrasse', calls: [], visits: [] },
-        { id: 8, rank: '8', name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Entièrement rénové = zéro levier travaux', calls: [], visits: [] },
-        { id: 9, rank: '9', name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové, DPE D/GES B, garage', calls: [], visits: [] },
-        { id: 10, rank: '10', name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Copro en cours = risque juridique réel', calls: [], visits: [] },
-        { id: 11, rank: '11', name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E = risque réglementaire inlouable 2034', calls: [], visits: [] },
-        { id: 12, rank: '12', name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: '4e sans ascenseur = éliminatoire pour revente', calls: [], visits: [] },
-        { id: 13, rank: '13', name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'DPE C/B excellent mais quartier trop excentré', calls: [], visits: [] },
-        { id: 14, rank: '14', name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit, zéro potentiel', calls: [], visits: [] },
-        { id: 15, rank: '15', name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher, DPE E', calls: [], visits: [] },
-        { id: 16, rank: '16', name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Trop cher pour la surface', calls: [], visits: [] },
-        { id: 17, rank: '17', name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [], visits: [] },
-        { id: 18, rank: '18', name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Hors budget, peu de levier', calls: [], visits: [] },
+        { id: 1, name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [], visits: [] },
+        { id: 2, name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable, garage, cave, à rénover', calls: [], visits: [] },
+        { id: 3, name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Particulier, emplacement top Airbnb, négo 185-190k', calls: [], visits: [] },
+        { id: 4, name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable, petit levier travaux', calls: [], visits: [] },
+        { id: 5, name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb mais petit, prix/m² élevé', calls: [], visits: [] },
+        { id: 6, name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle, DPE C, travaux possibles', calls: [], visits: [] },
+        { id: 7, name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A, parking, terrasse', calls: [], visits: [] },
+        { id: 8, name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Entièrement rénové = zéro levier travaux', calls: [], visits: [] },
+        { id: 9, name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové, DPE D/GES B, garage', calls: [], visits: [] },
+        { id: 10, name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Copro en cours = risque juridique réel', calls: [], visits: [] },
+        { id: 11, name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E = risque réglementaire inlouable 2034', calls: [], visits: [] },
+        { id: 12, name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: '4e sans ascenseur = éliminatoire pour revente', calls: [], visits: [] },
+        { id: 13, name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'DPE C/B excellent mais quartier trop excentré', calls: [], visits: [] },
+        { id: 14, name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit, zéro potentiel', calls: [], visits: [] },
+        { id: 15, name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher, DPE E', calls: [], visits: [] },
+        { id: 16, name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Trop cher pour la surface', calls: [], visits: [] },
+        { id: 17, name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [], visits: [] },
+        { id: 18, name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Hors budget, peu de levier', calls: [], visits: [] },
       ];
+
+      const getRank = (index) => {
+        const ranks = ['🥇', '🥈', '🥉'];
+        return ranks[index] || (index + 1).toString();
+      };
+
+      const sortAndRankApparts = (list) => {
+        const sorted = [...list].sort((a, b) => b.score - a.score);
+        return sorted.map((a, idx) => ({ ...a, rank: getRank(idx) }));
+      };
 
       useEffect(() => {
         const saved = localStorage.getItem('apparts');
         if (saved) {
           const data = JSON.parse(saved);
           const fixed = data.map(a => ({ ...a, visits: a.visits || [], calls: a.calls || [] }));
-          setApparts(fixed);
+          const sorted = sortAndRankApparts(fixed);
+          setApparts(sorted);
         } else {
-          setApparts(initData);
+          const sorted = sortAndRankApparts(initData);
+          setApparts(sorted);
         }
       }, []);
 
@@ -175,7 +189,6 @@
         const newId = Math.max(...apparts.map(a => a.id), 0) + 1;
         const added = {
           id: newId,
-          rank: newId,
           name: newAppart.name,
           price: parseInt(newAppart.price),
           surface: parseFloat(newAppart.surface),
@@ -185,10 +198,21 @@
           calls: [],
           visits: []
         };
-        setApparts([...apparts, added]);
-        setSelectedAppart(added);
+        const sorted = sortAndRankApparts([...apparts, added]);
+        setApparts(sorted);
+        setSelectedAppart(sorted.find(a => a.id === newId));
         setShowAddAppart(false);
         setNewAppart({ name: '', price: '', surface: '', location: '', score: '' });
+      };
+
+      const handleDeleteAppart = () => {
+        if (!selectedAppart) return;
+        if (confirm('Supprimer cet appart ?')) {
+          const filtered = apparts.filter(a => a.id !== selectedAppart.id);
+          const sorted = sortAndRankApparts(filtered);
+          setApparts(sorted);
+          setSelectedAppart(null);
+        }
       };
 
       const handleAddVisit = () => {
@@ -284,7 +308,7 @@
                 </div>
               )}
               <div className="list-header">
-                <span style={{ fontWeight: 600 }}>Apparts</span>
+                <span style={{ fontWeight: 600 }}>Apparts ({displayApparts.length})</span>
                 <button className="btn-add" onClick={() => setShowAddAppart(true)}>+ Ajouter</button>
               </div>
               <div className="list-apparts">
@@ -312,7 +336,10 @@
                       <h2>{selectedAppart.rank} {selectedAppart.name}</h2>
                       <p>{selectedAppart.location}</p>
                     </div>
-                    <div className="score-big">{selectedAppart.score}/10</div>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                      <div className="score-big">{selectedAppart.score}/10</div>
+                      <button className="btn-delete-appart" onClick={handleDeleteAppart}>Supprimer</button>
+                    </div>
                   </div>
                   <div className="stats-grid">
                     <div className="stat-item"><div className="stat-label">Prix</div><div className="stat-value">{selectedAppart.price.toLocaleString()}€</div></div>
