@@ -217,8 +217,11 @@
       const [apparts, setApparts] = useState(project.apparts || []);
       const [selectedAppart, setSelectedAppart] = useState(null);
       const [showNewAppart, setShowNewAppart] = useState(false);
-      const [newForm, setNewForm] = useState({ name: '', price: '', surface: '', location: '', score: '' });
-
+const [newForm, setNewForm] = useState({ 
+  name: '', price: '', surface: '', location: '', score: '',
+  address: '', dpe: '', ges: '', yearBuilt: '', description: ''
+});
+      
       const sortApparts = (list) => {
         return [...list].sort((a, b) => b.score - a.score).map((a, idx) => {
           const ranks = ['🥇', '🥈', '🥉'];
@@ -289,6 +292,31 @@
                 <input className="input" type="number" placeholder="Surface (m²)" step="0.1" value={newForm.surface} onChange={e => setNewForm({ ...newForm, surface: e.target.value })} />
                 <input className="input" placeholder="Localisation" value={newForm.location} onChange={e => setNewForm({ ...newForm, location: e.target.value })} />
                 <input className="input" type="number" placeholder="Score (0-10)" step="0.5" min="0" max="10" value={newForm.score} onChange={e => setNewForm({ ...newForm, score: e.target.value })} />
+
+<input className="input" placeholder="Adresse complète" value={newForm.address} onChange={e => setNewForm({ ...newForm, address: e.target.value })} />
+                <select className="input" value={newForm.dpe} onChange={e => setNewForm({ ...newForm, dpe: e.target.value })}>
+                  <option value="">DPE (A à G)</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
+                <select className="input" value={newForm.ges} onChange={e => setNewForm({ ...newForm, ges: e.target.value })}>
+                  <option value="">GES (A à G)</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
+                <input className="input" type="number" placeholder="Année construction" value={newForm.yearBuilt} onChange={e => setNewForm({ ...newForm, yearBuilt: e.target.value })} />
+                <textarea className="textarea" placeholder="Notes / Description" value={newForm.description} onChange={e => setNewForm({ ...newForm, description: e.target.value })} />
+                
                 <div className="modal-buttons">
                   <button className="btn btn-secondary" onClick={() => setShowNewAppart(false)}>Annuler</button>
                   <button className="btn btn-primary" onClick={handleAddAppart}>Ajouter</button>
@@ -312,9 +340,19 @@
         onUpdate({ notes });
       };
 
-      const handleAddVisit = () => {
+     const handleAddVisit = () => {
         if (!visitForm.date || !visitForm.time) return;
-        const visit = { id: Date.now(), date: visitForm.date, time: visitForm.time, questions: [] };
+        const defaultQuestions = [
+          { id: Date.now() + 1, text: 'État général du bien', answer: '' },
+          { id: Date.now() + 2, text: 'Nuisances sonores / odeurs', answer: '' },
+          { id: Date.now() + 3, text: 'Luminosité et exposition', answer: '' },
+          { id: Date.now() + 4, text: 'État de la cuisine et salle de bain', answer: '' },
+          { id: Date.now() + 5, text: 'Chauffage et eau chaude', answer: '' },
+          { id: Date.now() + 6, text: 'Humidité / moisissures', answer: '' },
+          { id: Date.now() + 7, text: 'Parking et stationnement', answer: '' },
+          { id: Date.now() + 8, text: 'Commerces à proximité', answer: '' },
+        ];
+        const visit = { id: Date.now(), date: visitForm.date, time: visitForm.time, questions: defaultQuestions };
         onUpdate({ visits: [...(appart.visits || []), visit] });
         setVisitForm({ date: '', time: '' });
         setShowAddVisit(false);
@@ -392,10 +430,17 @@
               <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#fbbf24' }}>{appart.score}/10</div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', background: '#0f172a', padding: '12px', borderRadius: '6px', marginBottom: '16px' }}>
-              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.price.toLocaleString()}€</div></div>
-              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Surface</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.surface}m²</div></div>
-              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix/m²</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{Math.round(appart.price / appart.surface).toLocaleString()}€</div></div>
+           <div style={{ background: '#0f172a', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
+                <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.price.toLocaleString()}€</div></div>
+                <div><div style={{ fontSize: '11px', color: '#64748b' }}>Surface</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.surface}m²</div></div>
+                <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix/m²</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{Math.round(appart.price / appart.surface).toLocaleString()}€</div></div>
+              </div>
+              {appart.address && <div><div style={{ fontSize: '11px', color: '#64748b' }}>Adresse</div><div style={{ marginTop: '4px' }}>{appart.address}</div></div>}
+              {appart.dpe && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>DPE</div><div style={{ fontWeight: 'bold', marginTop: '4px', color: '#fbbf24' }}>{appart.dpe}</div></div>}
+              {appart.ges && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>GES</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.ges}</div></div>}
+              {appart.yearBuilt && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>Année</div><div style={{ marginTop: '4px' }}>{appart.yearBuilt}</div></div>}
+              {appart.description && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>Description</div><div style={{ marginTop: '4px', fontSize: '13px' }}>{appart.description}</div></div>}
             </div>
 
             <div style={{ marginBottom: '16px' }}>
