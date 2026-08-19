@@ -11,56 +11,54 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; }
     
-    .app-container { display: flex; height: 100vh; }
-    .sidebar { width: 250px; background: #0f172a; border-right: 1px solid #1e293b; display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; overflow-y: auto; z-index: 100; }
-    .main { flex: 1; margin-left: 250px; display: flex; flex-direction: column; height: 100vh; }
+    .app { display: flex; height: 100vh; }
+    .sidebar { width: 250px; background: #0f172a; border-right: 1px solid #1e293b; overflow-y: auto; }
+    .main { flex: 1; display: flex; flex-direction: column; }
     
     .logo { padding: 20px 16px; border-bottom: 1px solid #1e293b; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
-    .nav-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; margin: 0 8px; border-radius: 4px; transition: all 0.2s; }
+    .nav-item { padding: 12px 16px; cursor: pointer; margin: 0 8px; border-radius: 4px; transition: all 0.2s; border-left: 3px solid transparent; }
     .nav-item:hover { background: #1e293b; }
     .nav-item.active { background: #1e293b; border-left-color: #d97706; color: #fbbf24; }
-    .nav-section { padding: 8px 16px; font-size: 11px; color: #64748b; font-weight: 600; margin-top: 20px; }
+    .nav-section { padding: 8px 16px; font-size: 11px; color: #64748b; font-weight: 600; margin-top: 16px; }
     
-    .header { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { font-size: 24px; font-weight: bold; }
-    
+    .header { background: #1e293b; padding: 16px 24px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
     .content { flex: 1; overflow-y: auto; padding: 24px; }
     
-    .card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 24px; margin-bottom: 16px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .card-title { font-size: 18px; font-weight: bold; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .card-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
     
-    .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; font-size: 14px; }
     .btn-primary { background: #d97706; color: white; }
     .btn-primary:hover { background: #b45309; }
     .btn-secondary { background: #334155; color: white; }
     .btn-secondary:hover { background: #475569; }
-    .btn-danger { background: #dc2626; color: white; }
-    .btn-danger:hover { background: #991b1b; }
+    .btn-small { padding: 4px 12px; font-size: 12px; }
     
-    .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
     .project-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.2s; }
-    .project-card:hover { background: #334155; border-color: #d97706; }
-    .project-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
-    .project-meta { font-size: 12px; color: #94a3b8; }
+    .project-card:hover { border-color: #d97706; transform: translateY(-2px); }
     
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .modal { background: #1e293b; border-radius: 8px; padding: 24px; max-width: 500px; width: 90%; }
+    .modal { background: #1e293b; border-radius: 8px; padding: 24px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
     .modal-buttons { display: flex; gap: 8px; margin-top: 16px; }
     
-    .input { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; color: #f1f5f9; margin-bottom: 12px; font-family: inherit; font-size: 14px; }
+    .input { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; color: #f1f5f9; margin-bottom: 12px; font-size: 14px; font-family: inherit; }
+    .textarea { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; color: #f1f5f9; margin-bottom: 12px; font-size: 14px; font-family: inherit; min-height: 80px; resize: vertical; }
     
-    .profile-section { margin-bottom: 24px; }
-    .profile-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .profile-value { font-size: 16px; font-weight: 600; }
+    .appart-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+    .appart-card:hover { border-color: #d97706; }
+    .appart-name { font-weight: 600; margin-bottom: 8px; }
+    .appart-info { font-size: 13px; color: #94a3b8; }
     
-    .empty-state { text-align: center; padding: 40px 20px; color: #64748b; }
-    .empty-state h3 { font-size: 18px; margin-bottom: 8px; }
+    .question-item { background: #0f172a; border-left: 3px solid #d97706; padding: 12px; margin-bottom: 8px; border-radius: 4px; }
+    .question-text { font-weight: 600; margin-bottom: 8px; }
+    .answer-input { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 4px; padding: 8px; color: #f1f5f9; font-size: 12px; margin-top: 4px; }
+    
+    .empty-state { text-align: center; padding: 40px; color: #64748b; }
     
     @media (max-width: 768px) {
-      .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #1e293b; }
-      .main { margin-left: 0; }
-      .app-container { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .app { flex-direction: column; }
     }
   </style>
 </head>
@@ -69,7 +67,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    function AppartCRM() {
+    function App() {
       const [page, setPage] = useState('home');
       const [projects, setProjects] = useState([]);
       const [selectedProject, setSelectedProject] = useState(null);
@@ -79,20 +77,9 @@
 
       useEffect(() => {
         const saved = localStorage.getItem('appart-projects');
-        if (saved) {
-          setProjects(JSON.parse(saved));
-        } else {
-          const defaultProject = {
-            id: 1,
-            name: 'Recherche Appart Strasbourg',
-            createdAt: new Date().toLocaleDateString('fr-FR'),
-            apartCount: 18,
-            apparts: initApparts()
-          };
-          setProjects([defaultProject]);
-        }
-        
         const savedProfile = localStorage.getItem('appart-profile');
+        
+        if (saved) setProjects(JSON.parse(saved));
         if (savedProfile) setProfile(JSON.parse(savedProfile));
       }, []);
 
@@ -104,34 +91,12 @@
         localStorage.setItem('appart-profile', JSON.stringify(profile));
       }, [profile]);
 
-      const initApparts = () => [
-        { id: 1, name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo', calls: [], visits: [] },
-        { id: 2, name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable', calls: [], visits: [] },
-        { id: 3, name: 'Kléber-Gare 2P 59m²', price: 210000, surface: 59, location: 'Kléber-Gare', score: 7, notes: 'Emplacement top', calls: [], visits: [] },
-        { id: 4, name: 'Neudorf F4 Place du Marché', price: 219000, surface: 82, location: 'Neudorf', score: 7, notes: 'Surface imbattable', calls: [], visits: [] },
-        { id: 5, name: 'Petite France F2', price: 199990, surface: 39.7, location: 'Petite France', score: 6.5, notes: 'Meilleur Airbnb', calls: [], visits: [] },
-        { id: 6, name: 'La Meinau 3P 85m²', price: 199000, surface: 85, location: 'La Meinau', score: 6.5, notes: 'Surface exceptionnelle', calls: [], visits: [] },
-        { id: 7, name: 'Neudorf T2 42m²', price: 136500, surface: 42, location: 'Neudorf', score: 6, notes: 'DPE C/GES A', calls: [], visits: [] },
-        { id: 8, name: 'Neudorf T2 rénové', price: 159950, surface: 41, location: 'Neudorf', score: 5.5, notes: 'Zéro levier travaux', calls: [], visits: [] },
-        { id: 9, name: 'Neudorf F3 62m²', price: 199400, surface: 62, location: 'Neudorf', score: 5.5, notes: 'Partiellement rénové', calls: [], visits: [] },
-        { id: 10, name: 'Vauban Est 3P', price: 215000, surface: 57, location: 'Vauban Est', score: 5, notes: 'Risque juridique', calls: [], visits: [] },
-        { id: 11, name: 'Esplanade T2', price: 155875, surface: 41, location: 'Esplanade', score: 5, notes: 'DPE E', calls: [], visits: [] },
-        { id: 12, name: 'Esplanade Krutenau', price: 193158, surface: 51, location: 'Esplanade', score: 4.5, notes: 'Sans ascenseur', calls: [], visits: [] },
-        { id: 13, name: 'Robertsau T2', price: 173000, surface: 45.8, location: 'Robertsau', score: 4.5, notes: 'Quartier excentré', calls: [], visits: [] },
-        { id: 14, name: 'Studio Krutenau', price: 140000, surface: 28, location: 'Krutenau', score: 3, notes: 'Trop petit', calls: [], visits: [] },
-        { id: 15, name: 'Neudorf F3 Orpi', price: 235000, surface: 74, location: 'Neudorf', score: 3, notes: 'Trop cher', calls: [], visits: [] },
-        { id: 16, name: 'Vauban Est Foncia 2P', price: 205000, surface: 50, location: 'Vauban Est', score: 3, notes: 'Hors budget', calls: [], visits: [] },
-        { id: 17, name: 'Neudorf F3 terrasse', price: 240000, surface: 60, location: 'Neudorf', score: 2, notes: 'Hors budget total', calls: [], visits: [] },
-        { id: 18, name: 'Quartier Marne Orangerie', price: 218000, surface: 53, location: 'Quartier Marne', score: 2, notes: 'Peu de levier', calls: [], visits: [] },
-      ];
-
-      const handleNewProject = () => {
+      const createNewProject = () => {
         if (!newProjectName.trim()) return;
         const newProject = {
-          id: Math.max(...projects.map(p => p.id), 0) + 1,
+          id: Date.now(),
           name: newProjectName,
           createdAt: new Date().toLocaleDateString('fr-FR'),
-          apartCount: 0,
           apparts: []
         };
         setProjects([...projects, newProject]);
@@ -144,32 +109,40 @@
         setPage('project');
       };
 
-      const getRank = (index) => {
-        const ranks = ['🥇', '🥈', '🥉'];
-        return ranks[index] || (index + 1).toString();
-      };
-
-      const sortApparts = (apparts) => {
-        return [...apparts].sort((a, b) => b.score - a.score).map((a, idx) => ({ ...a, rank: getRank(idx) }));
+      const updateProject = (updatedProject) => {
+        setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+        setSelectedProject(updatedProject);
       };
 
       return (
-        <div className="app-container">
+        <div className="app">
           <div className="sidebar">
             <div className="logo">🏠 Appart CRM</div>
             <nav>
-              <div className="nav-item" onClick={() => setPage('home')} style={{ cursor: 'pointer', borderLeftColor: page === 'home' ? '#d97706' : 'transparent', color: page === 'home' ? '#fbbf24' : '#f1f5f9' }}>
+              <div 
+                className={`nav-item ${page === 'home' ? 'active' : ''}`} 
+                onClick={() => setPage('home')}
+              >
                 🏠 Accueil
               </div>
               {selectedProject && (
-                <div className="nav-item" onClick={() => setPage('project')} style={{ cursor: 'pointer', borderLeftColor: page === 'project' ? '#d97706' : 'transparent', color: page === 'project' ? '#fbbf24' : '#f1f5f9' }}>
+                <div 
+                  className={`nav-item ${page === 'project' ? 'active' : ''}`} 
+                  onClick={() => setPage('project')}
+                >
                   📋 {selectedProject.name}
                 </div>
               )}
-              <div className="nav-item" onClick={() => setPage('calendar')} style={{ cursor: 'pointer', borderLeftColor: page === 'calendar' ? '#d97706' : 'transparent', color: page === 'calendar' ? '#fbbf24' : '#f1f5f9' }}>
+              <div 
+                className={`nav-item ${page === 'calendar' ? 'active' : ''}`} 
+                onClick={() => setPage('calendar')}
+              >
                 📅 Calendrier
               </div>
-              <div className="nav-item" onClick={() => setPage('profile')} style={{ cursor: 'pointer', borderLeftColor: page === 'profile' ? '#d97706' : 'transparent', color: page === 'profile' ? '#fbbf24' : '#f1f5f9' }}>
+              <div 
+                className={`nav-item ${page === 'profile' ? 'active' : ''}`} 
+                onClick={() => setPage('profile')}
+              >
                 👤 Profil
               </div>
             </nav>
@@ -177,63 +150,36 @@
 
           <div className="main">
             <div className="header">
-              <h1>{page === 'home' ? 'Mes Projets' : page === 'project' ? selectedProject?.name : page === 'calendar' ? 'Calendrier' : 'Profil'}</h1>
+              <h1>
+                {page === 'home' ? 'Mes Projets' : 
+                 page === 'project' ? selectedProject?.name : 
+                 page === 'calendar' ? 'Calendrier' : 'Profil'}
+              </h1>
             </div>
 
             <div className="content">
-              {page === 'home' && (
-                <div>
-                  <div style={{ marginBottom: '24px' }}>
-                    <button className="btn btn-primary" onClick={() => setShowNewProject(true)}>+ Nouveau Projet</button>
+              {page === 'home' && <HomePage projects={projects} onOpenProject={openProject} onNewProject={() => setShowNewProject(true)} />}
+              {page === 'project' && selectedProject && <ProjectPage project={selectedProject} onUpdateProject={updateProject} />}
+              {page === 'calendar' && <CalendarPage projects={projects} />}
+              {page === 'profile' && <ProfilePage profile={profile} onUpdateProfile={setProfile} />}
+
+              {showNewProject && (
+                <div className="modal-overlay" onClick={() => setShowNewProject(false)}>
+                  <div className="modal" onClick={e => e.stopPropagation()}>
+                    <h2 style={{ marginBottom: '16px' }}>Nouveau Projet</h2>
+                    <input 
+                      className="input"
+                      placeholder="Nom du projet"
+                      value={newProjectName}
+                      onChange={e => setNewProjectName(e.target.value)}
+                      autoFocus
+                    />
+                    <div className="modal-buttons">
+                      <button className="btn btn-secondary" onClick={() => setShowNewProject(false)}>Annuler</button>
+                      <button className="btn btn-primary" onClick={createNewProject}>Créer</button>
+                    </div>
                   </div>
-                  {projects.length === 0 ? (
-                    <div className="empty-state">
-                      <h3>Aucun projet</h3>
-                      <p>Crée ton premier projet de recherche d'appart</p>
-                    </div>
-                  ) : (
-                    <div className="project-grid">
-                      {projects.map(project => (
-                        <div key={project.id} className="project-card" onClick={() => openProject(project)}>
-                          <div className="project-name">{project.name}</div>
-                          <div className="project-meta">Créé: {project.createdAt}</div>
-                          <div className="project-meta" style={{ marginTop: '8px' }}>{project.apartCount} appart(s)</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {showNewProject && (
-                    <div className="modal-overlay" onClick={() => setShowNewProject(false)}>
-                      <div className="modal" onClick={e => e.stopPropagation()}>
-                        <h2 style={{ marginBottom: '16px' }}>Nouveau Projet</h2>
-                        <input 
-                          type="text"
-                          className="input"
-                          placeholder="Nom du projet (ex: Recherche Appart Lyon)"
-                          value={newProjectName}
-                          onChange={e => setNewProjectName(e.target.value)}
-                          autoFocus
-                        />
-                        <div className="modal-buttons">
-                          <button className="btn btn-secondary" onClick={() => setShowNewProject(false)}>Annuler</button>
-                          <button className="btn btn-primary" onClick={handleNewProject}>Créer</button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              )}
-
-              {page === 'project' && selectedProject && (
-                <ProjectView project={selectedProject} />
-              )}
-
-              {page === 'calendar' && (
-                <CalendarView projects={projects} />
-              )}
-
-              {page === 'profile' && (
-                <ProfileView profile={profile} setProfile={setProfile} />
               )}
             </div>
           </div>
@@ -241,213 +187,258 @@
       );
     }
 
-  function ProjectView({ project }) {
-  const sortAndRankApparts = (list) => {
-    const ranks = ['🥇', '🥈', '🥉'];
-    const getRank = (index) => ranks[index] || (index + 1).toString();
-    return [...list].sort((a, b) => b.score - a.score).map((a, idx) => ({ ...a, rank: getRank(idx) }));
-  };
-  
-  const [apparts, setApparts] = useState(sortAndRankApparts(project.apparts || []));
-  const [selectedAppart, setSelectedAppart] = useState(null);
-  const [showNewAppart, setShowNewAppart] = useState(false);
-  const [newAppartForm, setNewAppartForm] = useState({ name: '', price: '', surface: '', location: '', score: '' });
-
-  const handleAddAppart = () => {
-    if (!newAppartForm.name || !newAppartForm.price || !newAppartForm.surface || !newAppartForm.location || !newAppartForm.score) return;
-    const newA = {
-      id: Math.max(...apparts.map(a => a.id), 0) + 1,
-      name: newAppartForm.name,
-      price: parseInt(newAppartForm.price),
-      surface: parseFloat(newAppartForm.surface),
-      location: newAppartForm.location,
-      score: parseFloat(newAppartForm.score),
-      notes: '',
-      calls: [],
-      visits: []
-    };
-    const sorted = sortAndRankApparts([...apparts, newA]);
-    setApparts(sorted);
-    setNewAppartForm({ name: '', price: '', surface: '', location: '', score: '' });
-    setShowNewAppart(false);
-  };
-
-  const updateAppartNotes = (id, notes) => {
-    const updated = apparts.map(a => a.id === id ? { ...a, notes } : a);
-    setApparts(updated);
-    setSelectedAppart({ ...selectedAppart, notes });
-  };
-
-  if (selectedAppart) {
-    return (
-      <div>
-        <button className="btn btn-secondary" onClick={() => setSelectedAppart(null)} style={{ marginBottom: '16px' }}>← Retour</button>
-        
-        <div className="card">
-          <div className="card-header">
-            <div>
-              <div className="card-title">{selectedAppart.rank} {selectedAppart.name}</div>
-              <div style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>{selectedAppart.location}</div>
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fbbf24' }}>{selectedAppart.score}/10</div>
+    function HomePage({ projects, onOpenProject, onNewProject }) {
+      return (
+        <div>
+          <div style={{ marginBottom: '24px' }}>
+            <button className="btn btn-primary" onClick={onNewProject}>+ Nouveau Projet</button>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', background: '#0f172a', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Prix</div>
-              <div style={{ fontWeight: 'bold', marginTop: '4px' }}>{selectedAppart.price.toLocaleString()}€</div>
+          {projects.length === 0 ? (
+            <div className="empty-state">
+              <h3>Aucun projet</h3>
+              <p>Crée ton premier projet pour commencer</p>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Surface</div>
-              <div style={{ fontWeight: 'bold', marginTop: '4px' }}>{selectedAppart.surface}m²</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Prix/m²</div>
-              <div style={{ fontWeight: 'bold', marginTop: '4px' }}>{Math.round(selectedAppart.price / selectedAppart.surface).toLocaleString()}€</div>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontWeight: '600', marginBottom: '8px' }}>📝 Notes personnelles</div>
-            <textarea 
-              className="input"
-              value={selectedAppart.notes}
-              onChange={(e) => updateAppartNotes(selectedAppart.id, e.target.value)}
-              placeholder="Ajoute tes notes sur cet appart..."
-              rows="4"
-            />
-          </div>
-
-          {(selectedAppart.visits || []).length > 0 && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontWeight: '600', marginBottom: '8px' }}>📍 Visites prévues</div>
-              {(selectedAppart.visits || []).map((v, idx) => (
-                <div key={idx} style={{ background: '#0f172a', padding: '12px', borderRadius: '4px', marginBottom: '8px' }}>
-                  <div style={{ color: '#fbbf24', fontWeight: '600' }}>{v.time}</div>
-                  <div style={{ fontSize: '12px', color: '#cbd5e1' }}>{new Date(v.date).toLocaleDateString('fr-FR')}</div>
-                  {(v.questions || []).length > 0 && <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px' }}>{(v.questions || []).length} question(s) en préparation</div>}
+          ) : (
+            <div className="grid">
+              {projects.map(p => (
+                <div key={p.id} className="project-card" onClick={() => onOpenProject(p)}>
+                  <div className="card-title">{p.name}</div>
+                  <div style={{ color: '#94a3b8', fontSize: '13px' }}>Créé: {p.createdAt}</div>
+                  <div style={{ color: '#fbbf24', fontSize: '13px', marginTop: '8px' }}>{p.apparts?.length || 0} appart(s)</div>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  return (
-    <div>
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <p style={{ color: '#94a3b8' }}>{apparts.length} appart(s)</p>
-        <button className="btn btn-primary" onClick={() => setShowNewAppart(true)}>+ Ajouter appart</button>
-      </div>
+    function ProjectPage({ project, onUpdateProject }) {
+      const [apparts, setApparts] = useState(project.apparts || []);
+      const [selectedAppart, setSelectedAppart] = useState(null);
+      const [showNewAppart, setShowNewAppart] = useState(false);
+      const [newForm, setNewForm] = useState({ name: '', price: '', surface: '', location: '', score: '' });
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
-        {apparts.map(appart => (
-          <div key={appart.id} className="card" onClick={() => setSelectedAppart(appart)} style={{ cursor: 'pointer' }}>
-            <div className="card-header">
-              <div>
-                <div className="card-title">{appart.rank} {appart.name}</div>
-                <div style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>{appart.location}</div>
-              </div>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#fbbf24' }}>{appart.score}/10</div>
-            </div>
-            <div style={{ color: '#cbd5e1', fontSize: '14px' }}>{appart.price.toLocaleString()}€ • {appart.surface}m²</div>
-            {(appart.visits || []).length > 0 && <div style={{ fontSize: '12px', color: '#fbbf24', marginTop: '8px' }}>📍 {(appart.visits || []).length} visite(s)</div>}
+      const sortApparts = (list) => {
+        return [...list].sort((a, b) => b.score - a.score).map((a, idx) => {
+          const ranks = ['🥇', '🥈', '🥉'];
+          return { ...a, rank: ranks[idx] || (idx + 1).toString() };
+        });
+      };
+
+      const handleAddAppart = () => {
+        if (!newForm.name || !newForm.price || !newForm.surface || !newForm.location || !newForm.score) return;
+        const newA = {
+          id: Date.now(),
+          name: newForm.name,
+          price: parseInt(newForm.price),
+          surface: parseFloat(newForm.surface),
+          location: newForm.location,
+          score: parseFloat(newForm.score),
+          notes: '',
+          visits: [],
+          calls: []
+        };
+        const sorted = sortApparts([...apparts, newA]);
+        setApparts(sorted);
+        onUpdateProject({ ...project, apparts: sorted });
+        setNewForm({ name: '', price: '', surface: '', location: '', score: '' });
+        setShowNewAppart(false);
+      };
+
+      const updateAppart = (id, updates) => {
+        const updated = apparts.map(a => a.id === id ? { ...a, ...updates } : a);
+        setApparts(updated);
+        onUpdateProject({ ...project, apparts: updated });
+        if (selectedAppart?.id === id) setSelectedAppart({ ...selectedAppart, ...updates });
+      };
+
+      const sorted = sortApparts(apparts);
+
+      if (selectedAppart) {
+        return <AppartDetail appart={selectedAppart} onBack={() => setSelectedAppart(null)} onUpdate={(updates) => updateAppart(selectedAppart.id, updates)} />;
+      }
+
+      return (
+        <div>
+          <div style={{ marginBottom: '20px', display: 'flex', gap: '8px' }}>
+            <button className="btn btn-primary" onClick={() => setShowNewAppart(true)}>+ Ajouter appart</button>
+            <span style={{ color: '#94a3b8' }}>{sorted.length} appart(s)</span>
           </div>
-        ))}
-      </div>
 
-      {showNewAppart && (
-        <div className="modal-overlay" onClick={() => setShowNewAppart(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ marginBottom: '16px' }}>Ajouter un appart</h2>
-            <input 
-              type="text"
-              className="input"
-              placeholder="Nom"
-              value={newAppartForm.name}
-              onChange={e => setNewAppartForm({ ...newAppartForm, name: e.target.value })}
-            />
-            <input 
-              type="number"
-              className="input"
-              placeholder="Prix (€)"
-              value={newAppartForm.price}
-              onChange={e => setNewAppartForm({ ...newAppartForm, price: e.target.value })}
-            />
-            <input 
-              type="number"
-              className="input"
-              placeholder="Surface (m²)"
-              step="0.1"
-              value={newAppartForm.surface}
-              onChange={e => setNewAppartForm({ ...newAppartForm, surface: e.target.value })}
-            />
-            <input 
-              type="text"
-              className="input"
-              placeholder="Localisation"
-              value={newAppartForm.location}
-              onChange={e => setNewAppartForm({ ...newAppartForm, location: e.target.value })}
-            />
-            <input 
-              type="number"
-              className="input"
-              placeholder="Score (0-10)"
-              step="0.5"
-              min="0"
-              max="10"
-              value={newAppartForm.score}
-              onChange={e => setNewAppartForm({ ...newAppartForm, score: e.target.value })}
-            />
-            <div className="modal-buttons">
-              <button className="btn btn-secondary" onClick={() => setShowNewAppart(false)}>Annuler</button>
-              <button className="btn btn-primary" onClick={handleAddAppart}>Ajouter</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-return (
-  <div>
-    <p style={{ marginBottom: '20px', color: '#94a3b8' }}>{apparts.length} appart(s)
-      {apparts.length === 0 && <button className="btn btn-primary" onClick={loadDefaultApparts} style={{marginLeft: '12px'}}>Charger les apparts</button>}
-    </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            {apparts.map(appart => (
-              <div key={appart.id} className="card" onClick={() => setSelectedAppart(appart)} style={{ cursor: 'pointer', borderColor: selectedAppart?.id === appart.id ? '#d97706' : '#334155' }}>
-                <div className="card-header">
-                  <div>
-                    <div className="card-title">{appart.rank} {appart.name}</div>
-                    <div style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>{appart.location}</div>
-                  </div>
-                  <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#fbbf24' }}>{appart.score}/10</div>
+          <div className="grid">
+            {sorted.map(a => (
+              <div key={a.id} className="appart-card" onClick={() => setSelectedAppart(a)}>
+                <div className="appart-name">{a.rank} {a.name}</div>
+                <div className="appart-info">{a.location}</div>
+                <div className="appart-info">{a.price.toLocaleString()}€ • {a.surface}m²</div>
+                <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={{ color: '#fbbf24', fontWeight: 'bold' }}>{a.score}/10</div>
+                  {a.visits?.length > 0 && <div style={{ fontSize: '12px', color: '#fbbf24' }}>📍 {a.visits.length}</div>}
                 </div>
-                <div style={{ color: '#cbd5e1', fontSize: '14px' }}>{appart.price.toLocaleString()}€ • {appart.surface}m²</div>
               </div>
             ))}
+          </div>
+
+          {showNewAppart && (
+            <div className="modal-overlay" onClick={() => setShowNewAppart(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h2 style={{ marginBottom: '16px' }}>Ajouter un appart</h2>
+                <input className="input" placeholder="Nom" value={newForm.name} onChange={e => setNewForm({ ...newForm, name: e.target.value })} />
+                <input className="input" type="number" placeholder="Prix (€)" value={newForm.price} onChange={e => setNewForm({ ...newForm, price: e.target.value })} />
+                <input className="input" type="number" placeholder="Surface (m²)" step="0.1" value={newForm.surface} onChange={e => setNewForm({ ...newForm, surface: e.target.value })} />
+                <input className="input" placeholder="Localisation" value={newForm.location} onChange={e => setNewForm({ ...newForm, location: e.target.value })} />
+                <input className="input" type="number" placeholder="Score (0-10)" step="0.5" min="0" max="10" value={newForm.score} onChange={e => setNewForm({ ...newForm, score: e.target.value })} />
+                <div className="modal-buttons">
+                  <button className="btn btn-secondary" onClick={() => setShowNewAppart(false)}>Annuler</button>
+                  <button className="btn btn-primary" onClick={handleAddAppart}>Ajouter</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function AppartDetail({ appart, onBack, onUpdate }) {
+      const [notes, setNotes] = useState(appart.notes);
+      const [showAddVisit, setShowAddVisit] = useState(false);
+      const [visitForm, setVisitForm] = useState({ date: '', time: '' });
+      const [showAddQuestion, setShowAddQuestion] = useState(false);
+      const [newQuestion, setNewQuestion] = useState('');
+      const [selectedVisit, setSelectedVisit] = useState(null);
+
+      const handleSaveNotes = () => {
+        onUpdate({ notes });
+      };
+
+      const handleAddVisit = () => {
+        if (!visitForm.date || !visitForm.time) return;
+        const visit = { id: Date.now(), date: visitForm.date, time: visitForm.time, questions: [] };
+        onUpdate({ visits: [...(appart.visits || []), visit] });
+        setVisitForm({ date: '', time: '' });
+        setShowAddVisit(false);
+      };
+
+      const handleAddQuestion = () => {
+        if (!newQuestion.trim() || !selectedVisit) return;
+        const updatedVisits = appart.visits.map(v => 
+          v.id === selectedVisit.id 
+            ? { ...v, questions: [...(v.questions || []), { id: Date.now(), text: newQuestion, answer: '' }] }
+            : v
+        );
+        onUpdate({ visits: updatedVisits });
+        setNewQuestion('');
+        setSelectedVisit({ ...selectedVisit, questions: updatedVisits.find(v => v.id === selectedVisit.id).questions });
+      };
+
+      const updateAnswer = (visitId, questionId, answer) => {
+        const updatedVisits = appart.visits.map(v => 
+          v.id === visitId 
+            ? { ...v, questions: v.questions.map(q => q.id === questionId ? { ...q, answer } : q) }
+            : v
+        );
+        onUpdate({ visits: updatedVisits });
+        if (selectedVisit?.id === visitId) {
+          setSelectedVisit({ ...selectedVisit, questions: updatedVisits.find(v => v.id === visitId).questions });
+        }
+      };
+
+      if (selectedVisit) {
+        return (
+          <div>
+            <button className="btn btn-secondary" onClick={() => setSelectedVisit(null)} style={{ marginBottom: '16px' }}>← Retour</button>
+            <div className="card">
+              <div className="card-title">📍 Visite du {new Date(selectedVisit.date).toLocaleDateString('fr-FR')} à {selectedVisit.time}</div>
+              
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontWeight: '600', marginBottom: '8px' }}>Questions</div>
+                {(selectedVisit.questions || []).length === 0 ? (
+                  <p style={{ fontSize: '13px', color: '#94a3b8' }}>Aucune question</p>
+                ) : (
+                  selectedVisit.questions.map(q => (
+                    <div key={q.id} className="question-item">
+                      <div className="question-text">Q: {q.text}</div>
+                      <textarea 
+                        className="answer-input"
+                        placeholder="Réponse..."
+                        value={q.answer}
+                        onChange={e => updateAnswer(selectedVisit.id, q.id, e.target.value)}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div>
+                <input className="input" placeholder="Nouvelle question" value={newQuestion} onChange={e => setNewQuestion(e.target.value)} />
+                <button className="btn btn-primary btn-small" onClick={handleAddQuestion}>+ Ajouter question</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <button className="btn btn-secondary" onClick={onBack} style={{ marginBottom: '16px' }}>← Retour</button>
+          
+          <div className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+              <div>
+                <div className="card-title">{appart.rank} {appart.name}</div>
+                <div style={{ color: '#94a3b8' }}>{appart.location}</div>
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#fbbf24' }}>{appart.score}/10</div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', background: '#0f172a', padding: '12px', borderRadius: '6px', marginBottom: '16px' }}>
+              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.price.toLocaleString()}€</div></div>
+              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Surface</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.surface}m²</div></div>
+              <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix/m²</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{Math.round(appart.price / appart.surface).toLocaleString()}€</div></div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontWeight: '600', marginBottom: '8px' }}>📝 Notes personnelles</div>
+              <textarea className="textarea" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Ajoute tes notes..." />
+              <button className="btn btn-primary btn-small" onClick={handleSaveNotes}>Sauvegarder</button>
+            </div>
+
+            <div>
+              <div style={{ fontWeight: '600', marginBottom: '8px' }}>📍 Visites prévues</div>
+              {(appart.visits || []).length === 0 ? (
+                <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '12px' }}>Aucune visite</p>
+              ) : (
+                appart.visits.map(v => (
+                  <div key={v.id} className="appart-card" onClick={() => setSelectedVisit(v)} style={{ cursor: 'pointer' }}>
+                    <div style={{ color: '#fbbf24', fontWeight: '600' }}>{v.time}</div>
+                    <div style={{ fontSize: '12px', color: '#cbd5e1' }}>{new Date(v.date).toLocaleDateString('fr-FR')}</div>
+                    {v.questions?.length > 0 && <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px' }}>{v.questions.length} question(s)</div>}
+                  </div>
+                ))
+              )}
+              <input className="input" type="date" value={visitForm.date} onChange={e => setVisitForm({ ...visitForm, date: e.target.value })} style={{ marginTop: '12px' }} />
+              <input className="input" type="time" value={visitForm.time} onChange={e => setVisitForm({ ...visitForm, time: e.target.value })} />
+              <button className="btn btn-primary btn-small" onClick={handleAddVisit}>+ Ajouter visite</button>
+            </div>
           </div>
         </div>
       );
     }
 
-    function CalendarView({ projects }) {
+    function CalendarPage({ projects }) {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
+
       const getAllVisits = () => {
         const visits = [];
         projects.forEach(p => {
           (p.apparts || []).forEach(a => {
             (a.visits || []).forEach(v => {
-              visits.push({ ...v, apartName: a.name, projectName: p.name, date: v.date });
+              visits.push({ ...v, apartName: a.name, projectName: p.name });
             });
           });
         });
@@ -457,31 +448,30 @@ return (
       const visits = getAllVisits();
       const visitDates = visits.map(v => new Date(v.date).getDate());
       const days = [];
-      
       for (let i = 0; i < firstDay; i++) days.push(null);
       for (let i = 1; i <= daysInMonth; i++) days.push(i);
-      
+
       const dayLabels = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-      
+
       return (
         <div>
           <div className="card">
             <div className="card-title" style={{ marginBottom: '16px' }}>{new Date(year, month).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', marginBottom: '20px' }}>
-              {dayLabels.map(label => <div key={label} style={{ textAlign: 'center', fontSize: '11px', color: '#64748b', fontWeight: '600' }}>{label}</div>)}
-              {days.map((day, idx) => (
-                <div key={idx} style={{ textAlign: 'center', padding: '8px', borderRadius: '4px', background: day === null ? 'transparent' : visitDates.includes(day) ? '#d97706' : day === today.getDate() ? '#334155' : '#1e293b', color: visitDates.includes(day) ? 'white' : '#f1f5f9', fontWeight: visitDates.includes(day) ? 'bold' : 'normal' }}>
-                  {day}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
+              {dayLabels.map(l => <div key={l} style={{ textAlign: 'center', fontSize: '11px', color: '#64748b', fontWeight: '600' }}>{l}</div>)}
+              {days.map((d, i) => (
+                <div key={i} style={{ textAlign: 'center', padding: '8px', borderRadius: '4px', background: d === null ? 'transparent' : visitDates.includes(d) ? '#d97706' : d === today.getDate() ? '#334155' : '#1e293b', color: visitDates.includes(d) ? 'white' : '#f1f5f9', fontWeight: visitDates.includes(d) ? 'bold' : 'normal' }}>
+                  {d}
                 </div>
               ))}
             </div>
           </div>
-          
+
           {visits.length > 0 && (
             <div className="card">
-              <div className="card-title" style={{ marginBottom: '16px' }}>Visites prévues</div>
-              {visits.sort((a, b) => a.date.localeCompare(b.date)).map((v, idx) => (
-                <div key={idx} style={{ padding: '12px', background: '#0f172a', borderRadius: '4px', marginBottom: '8px', fontSize: '14px' }}>
+              <div className="card-title">Visites prévues</div>
+              {visits.sort((a, b) => a.date.localeCompare(b.date)).map((v, i) => (
+                <div key={i} style={{ padding: '12px', background: '#0f172a', borderRadius: '4px', marginBottom: '8px', fontSize: '13px' }}>
                   <span style={{ color: '#fbbf24', fontWeight: '600' }}>{v.time}</span> - {v.apartName} ({v.projectName})
                 </div>
               ))}
@@ -491,81 +481,49 @@ return (
       );
     }
 
-    function ProfileView({ profile, setProfile }) {
+    function ProfilePage({ profile, onUpdateProfile }) {
       const [editing, setEditing] = useState(false);
-      const [formData, setFormData] = useState(profile);
+      const [form, setForm] = useState(profile);
 
       const handleSave = () => {
-        setProfile(formData);
+        onUpdateProfile(form);
         setEditing(false);
       };
 
       return (
         <div className="card">
-          <div className="card-header">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <div className="card-title">Mon Profil</div>
-            <button className="btn btn-secondary" onClick={() => setEditing(!editing)}>
+            <button className="btn btn-secondary btn-small" onClick={() => setEditing(!editing)}>
               {editing ? 'Annuler' : 'Modifier'}
             </button>
           </div>
 
           {editing ? (
             <div>
-              <div style={{ marginBottom: '12px' }}>
-                <div className="profile-label">Nom</div>
-                <input 
-                  type="text"
-                  className="input"
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-              <div style={{ marginBottom: '12px' }}>
-                <div className="profile-label">Ville</div>
-                <input 
-                  type="text"
-                  className="input"
-                  value={formData.city}
-                  onChange={e => setFormData({ ...formData, city: e.target.value })}
-                />
-              </div>
-              <div style={{ marginBottom: '12px' }}>
-                <div className="profile-label">Budget</div>
-                <input 
-                  type="text"
-                  className="input"
-                  value={formData.budget}
-                  onChange={e => setFormData({ ...formData, budget: e.target.value })}
-                />
-              </div>
-              <div style={{ marginBottom: '12px' }}>
-                <div className="profile-label">Email</div>
-                <input 
-                  type="email"
-                  className="input"
-                  value={formData.email}
-                  onChange={e => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
+              <input className="input" placeholder="Nom" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+              <input className="input" placeholder="Ville" value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} />
+              <input className="input" placeholder="Budget" value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} />
+              <input className="input" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
               <button className="btn btn-primary" onClick={handleSave}>Sauvegarder</button>
             </div>
           ) : (
             <div>
-              <div className="profile-section">
-                <div className="profile-label">Nom</div>
-                <div className="profile-value">{profile.name}</div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Nom</div>
+                <div style={{ fontWeight: '600', marginTop: '4px' }}>{profile.name}</div>
               </div>
-              <div className="profile-section">
-                <div className="profile-label">Ville</div>
-                <div className="profile-value">{profile.city}</div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Ville</div>
+                <div style={{ fontWeight: '600', marginTop: '4px' }}>{profile.city}</div>
               </div>
-              <div className="profile-section">
-                <div className="profile-label">Budget</div>
-                <div className="profile-value">{profile.budget}</div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Budget</div>
+                <div style={{ fontWeight: '600', marginTop: '4px' }}>{profile.budget}</div>
               </div>
-              <div className="profile-section">
-                <div className="profile-label">Email</div>
-                <div className="profile-value">{profile.email || 'Non défini'}</div>
+              <div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Email</div>
+                <div style={{ fontWeight: '600', marginTop: '4px' }}>{profile.email || 'Non défini'}</div>
               </div>
             </div>
           )}
@@ -573,7 +531,7 @@ return (
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<AppartCRM />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
