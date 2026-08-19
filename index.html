@@ -32,6 +32,9 @@
     .visit-time { color: #fbbf24; font-weight: 600; }
     .main-content { max-width: 1200px; margin: 0 auto; padding: 24px 16px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
     @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
+    .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+    .btn-add { background: #d97706; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .btn-add:hover { background: #b45309; }
     .list-apparts { display: flex; flex-direction: column; gap: 8px; }
     .appart-btn { text-align: left; padding: 12px; border-radius: 6px; border: 1px solid #1e293b; background: #1e293b; color: #f1f5f9; cursor: pointer; transition: all 0.2s; }
     .appart-btn.selected { border-color: #d97706; }
@@ -59,12 +62,18 @@
     .call-item { background: #0f172a; border-radius: 6px; padding: 12px; font-size: 14px; }
     .call-date { font-family: monospace; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
     .call-note { color: #e2e8f0; margin-top: 8px; }
-    input[type="date"], input[type="time"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
-    input[type="date"]:focus, input[type="time"]:focus, textarea:focus { outline: none; border-color: #d97706; }
+    input[type="date"], input[type="time"], input[type="text"], input[type="number"], textarea { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #f1f5f9; font-family: inherit; }
+    input[type="date"]:focus, input[type="time"]:focus, input[type="text"]:focus, input[type="number"]:focus, textarea:focus { outline: none; border-color: #d97706; }
     textarea { resize: vertical; min-height: 60px; }
     .btn-save { width: 100%; background: #d97706; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
     .btn-save:hover:not(:disabled) { background: #b45309; }
     .btn-save:disabled { background: #1e293b; cursor: not-allowed; opacity: 0.5; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: #1e293b; border-radius: 8px; padding: 24px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal h2 { font-size: 20px; font-weight: bold; margin-bottom: 16px; }
+    .modal-buttons { display: flex; gap: 8px; margin-top: 16px; }
+    .btn-cancel { background: #334155; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; cursor: pointer; flex: 1; }
+    .btn-cancel:hover { background: #475569; }
     .empty-state { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; text-align: center; color: #64748b; }
     .btn-delete { background: none; border: none; color: #64748b; cursor: pointer; padding: 4px; font-size: 14px; }
     .btn-delete:hover { background: #0f172a; border-radius: 4px; }
@@ -119,6 +128,8 @@
       const [newVisit, setNewVisit] = useState({ date: '', time: '' });
       const [filterRelance, setFilterRelance] = useState(false);
       const [selectedDateForVisits, setSelectedDateForVisits] = useState(null);
+      const [showAddAppart, setShowAddAppart] = useState(false);
+      const [newAppart, setNewAppart] = useState({ name: '', price: '', surface: '', location: '', score: '' });
 
       const initData = [
         { id: 1, rank: '🥇', name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo emplacement/prix/Airbnb/potentiel', calls: [], visits: [] },
@@ -155,6 +166,30 @@
       useEffect(() => {
         if (apparts.length > 0) localStorage.setItem('apparts', JSON.stringify(apparts));
       }, [apparts]);
+
+      const handleAddAppartSubmit = () => {
+        if (!newAppart.name || !newAppart.price || !newAppart.surface || !newAppart.location || !newAppart.score) {
+          alert('Remplis tous les champs');
+          return;
+        }
+        const newId = Math.max(...apparts.map(a => a.id), 0) + 1;
+        const added = {
+          id: newId,
+          rank: newId,
+          name: newAppart.name,
+          price: parseInt(newAppart.price),
+          surface: parseFloat(newAppart.surface),
+          location: newAppart.location,
+          score: parseFloat(newAppart.score),
+          notes: '',
+          calls: [],
+          visits: []
+        };
+        setApparts([...apparts, added]);
+        setSelectedAppart(added);
+        setShowAddAppart(false);
+        setNewAppart({ name: '', price: '', surface: '', location: '', score: '' });
+      };
 
       const handleAddVisit = () => {
         if (!selectedAppart || !newVisit.date || !newVisit.time) return;
@@ -248,6 +283,10 @@
                   ))}
                 </div>
               )}
+              <div className="list-header">
+                <span style={{ fontWeight: 600 }}>Apparts</span>
+                <button className="btn-add" onClick={() => setShowAddAppart(true)}>+ Ajouter</button>
+              </div>
               <div className="list-apparts">
                 {displayApparts.map(appart => (
                   <button key={appart.id} className={`appart-btn ${selectedAppart?.id === appart.id ? 'selected' : ''}`} onClick={() => setSelectedAppart(appart)}>
@@ -336,6 +375,52 @@
               )}
             </div>
           </div>
+
+          {showAddAppart && (
+            <div className="modal-overlay" onClick={() => setShowAddAppart(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <h2>Ajouter un appart</h2>
+                <input 
+                  type="text" 
+                  placeholder="Nom (ex: Esplanade F3)" 
+                  value={newAppart.name}
+                  onChange={(e) => setNewAppart({ ...newAppart, name: e.target.value })}
+                />
+                <input 
+                  type="number" 
+                  placeholder="Prix (€)" 
+                  value={newAppart.price}
+                  onChange={(e) => setNewAppart({ ...newAppart, price: e.target.value })}
+                />
+                <input 
+                  type="number" 
+                  placeholder="Surface (m²)" 
+                  step="0.1"
+                  value={newAppart.surface}
+                  onChange={(e) => setNewAppart({ ...newAppart, surface: e.target.value })}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Localisation" 
+                  value={newAppart.location}
+                  onChange={(e) => setNewAppart({ ...newAppart, location: e.target.value })}
+                />
+                <input 
+                  type="number" 
+                  placeholder="Score (0-10)" 
+                  step="0.5"
+                  min="0"
+                  max="10"
+                  value={newAppart.score}
+                  onChange={(e) => setNewAppart({ ...newAppart, score: e.target.value })}
+                />
+                <div className="modal-buttons">
+                  <button className="btn-cancel" onClick={() => setShowAddAppart(false)}>Annuler</button>
+                  <button className="btn-save" onClick={handleAddAppartSubmit}>Ajouter</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
