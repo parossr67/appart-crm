@@ -28,7 +28,8 @@
     .calendar-day.clickable:hover { background: #334155; }
     .daily-visits { background: #1e293b; border-radius: 6px; padding: 12px; margin-bottom: 16px; }
     .daily-visits h4 { font-weight: 600; margin-bottom: 8px; color: #fbbf24; }
-    .visit-item { background: #0f172a; padding: 8px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
+    .visit-item { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .visit-item:hover { background: #1e293b; }
     .visit-time { color: #fbbf24; font-weight: 600; }
     .main-content { max-width: 1200px; margin: 0 auto; padding: 24px 16px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
     @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
@@ -55,7 +56,8 @@
     .section-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; margin-top: 16px; }
     .section-title:first-of-type { margin-top: 0; }
     .visits-list { max-height: 150px; overflow-y: auto; margin-bottom: 12px; }
-    .visit-card { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .visit-card { background: #0f172a; padding: 10px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
+    .visit-card:hover { background: #1e293b; }
     .visit-info { flex: 1; }
     .visit-card-time { color: #fbbf24; font-weight: 600; }
     .add-section { background: #0f172a; border-radius: 6px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
@@ -71,11 +73,15 @@
     .btn-save:hover:not(:disabled) { background: #b45309; }
     .btn-save:disabled { background: #1e293b; cursor: not-allowed; opacity: 0.5; }
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .modal { background: #1e293b; border-radius: 8px; padding: 24px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal { background: #1e293b; border-radius: 8px; padding: 24px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
     .modal h2 { font-size: 20px; font-weight: bold; margin-bottom: 16px; }
     .modal-buttons { display: flex; gap: 8px; margin-top: 16px; }
     .btn-cancel { background: #334155; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; cursor: pointer; flex: 1; }
     .btn-cancel:hover { background: #475569; }
+    .btn-back { background: none; border: none; color: #fbbf24; cursor: pointer; font-size: 14px; margin-bottom: 12px; }
+    .question-card { background: #0f172a; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+    .question-text { font-weight: 600; margin-bottom: 8px; }
+    .answer-text { color: #cbd5e1; font-size: 13px; font-style: italic; }
     .empty-state { background: #1e293b; border: 1px solid #1e293b; border-radius: 6px; padding: 24px; text-align: center; color: #64748b; }
     .btn-delete { background: none; border: none; color: #64748b; cursor: pointer; padding: 4px; font-size: 14px; }
     .btn-delete:hover { background: #0f172a; border-radius: 4px; }
@@ -126,8 +132,10 @@
     function AppartCRM() {
       const [apparts, setApparts] = useState([]);
       const [selectedAppart, setSelectedAppart] = useState(null);
+      const [selectedVisit, setSelectedVisit] = useState(null);
       const [newCall, setNewCall] = useState({ date: '', note: '', relanceDate: '' });
       const [newVisit, setNewVisit] = useState({ date: '', time: '' });
+      const [newQuestion, setNewQuestion] = useState('');
       const [filterRelance, setFilterRelance] = useState(false);
       const [selectedDateForVisits, setSelectedDateForVisits] = useState(null);
       const [showAddAppart, setShowAddAppart] = useState(false);
@@ -168,7 +176,7 @@
         const saved = localStorage.getItem('apparts');
         if (saved) {
           const data = JSON.parse(saved);
-          const fixed = data.map(a => ({ ...a, visits: a.visits || [], calls: a.calls || [] }));
+          const fixed = data.map(a => ({ ...a, visits: (a.visits || []).map(v => ({ ...v, questions: v.questions || [] })), calls: a.calls || [] }));
           const sorted = sortAndRankApparts(fixed);
           setApparts(sorted);
         } else {
@@ -217,8 +225,9 @@
 
       const handleAddVisit = () => {
         if (!selectedAppart || !newVisit.date || !newVisit.time) return;
+        const visit = { date: newVisit.date, time: newVisit.time, questions: [] };
         const updated = apparts.map(a => 
-          a.id === selectedAppart.id ? { ...a, visits: [...(a.visits || []), newVisit] } : a
+          a.id === selectedAppart.id ? { ...a, visits: [...(a.visits || []), visit] } : a
         );
         setApparts(updated);
         setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
@@ -231,6 +240,61 @@
         );
         setApparts(updated);
         setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+      };
+
+      const handleAddQuestion = () => {
+        if (!selectedVisit || !newQuestion.trim()) return;
+        const visitIdx = selectedAppart.visits.findIndex(v => v.date === selectedVisit.date && v.time === selectedVisit.time);
+        if (visitIdx === -1) return;
+        
+        const question = { id: Date.now(), text: newQuestion, answer: '' };
+        const updated = apparts.map(a => {
+          if (a.id === selectedAppart.id) {
+            const newVisits = [...a.visits];
+            newVisits[visitIdx].questions.push(question);
+            return { ...a, visits: newVisits };
+          }
+          return a;
+        });
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        const visit = updated.find(a => a.id === selectedAppart.id).visits[visitIdx];
+        setSelectedVisit({ ...visit });
+        setNewQuestion('');
+      };
+
+      const handleUpdateAnswer = (questionId, answer) => {
+        const visitIdx = selectedAppart.visits.findIndex(v => v.date === selectedVisit.date && v.time === selectedVisit.time);
+        const questionIdx = selectedAppart.visits[visitIdx].questions.findIndex(q => q.id === questionId);
+        
+        const updated = apparts.map(a => {
+          if (a.id === selectedAppart.id) {
+            const newVisits = [...a.visits];
+            newVisits[visitIdx].questions[questionIdx].answer = answer;
+            return { ...a, visits: newVisits };
+          }
+          return a;
+        });
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        const visit = updated.find(a => a.id === selectedAppart.id).visits[visitIdx];
+        setSelectedVisit({ ...visit });
+      };
+
+      const handleDeleteQuestion = (questionId) => {
+        const visitIdx = selectedAppart.visits.findIndex(v => v.date === selectedVisit.date && v.time === selectedVisit.time);
+        const updated = apparts.map(a => {
+          if (a.id === selectedAppart.id) {
+            const newVisits = [...a.visits];
+            newVisits[visitIdx].questions = newVisits[visitIdx].questions.filter(q => q.id !== questionId);
+            return { ...a, visits: newVisits };
+          }
+          return a;
+        });
+        setApparts(updated);
+        setSelectedAppart(updated.find(a => a.id === selectedAppart.id));
+        const visit = updated.find(a => a.id === selectedAppart.id).visits[visitIdx];
+        setSelectedVisit({ ...visit });
       };
 
       const handleAddCall = () => {
@@ -266,7 +330,7 @@
         const visits = [];
         apparts.forEach(a => {
           (a.visits || []).forEach(v => {
-            if (v.date === date) visits.push({ ...v, apartName: a.name, apartRank: a.rank });
+            if (v.date === date) visits.push({ ...v, apartName: a.name, apartRank: a.rank, apartId: a.id });
           });
         });
         return visits.sort((a, b) => a.time.localeCompare(b.time));
@@ -281,6 +345,69 @@
           return d >= today && d <= nextWeek;
         })
       ) : apparts;
+
+      if (selectedVisit && selectedAppart) {
+        return (
+          <div style={{ minHeight: '100vh', background: '#0f172a' }}>
+            <div className="header">
+              <div className="header-content">
+                <button className="btn-back" onClick={() => setSelectedVisit(null)}>← Retour</button>
+                <h1>{selectedAppart.rank} {selectedAppart.name}</h1>
+              </div>
+            </div>
+            <div className="main-content">
+              <div style={{ gridColumn: '1 / -1' }}>
+                <div className="detail-card">
+                  <h2 style={{ marginBottom: '16px' }}>📍 Visite du {new Date(selectedVisit.date).toLocaleDateString('fr-FR')} à {selectedVisit.time}</h2>
+                  
+                  <div className="section-title">Questions à préparer</div>
+                  {(selectedVisit.questions || []).length === 0 ? (
+                    <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Aucune question</p>
+                  ) : (
+                    <div style={{ marginBottom: '12px' }}>
+                      {(selectedVisit.questions || []).map(q => (
+                        <div key={q.id} className="question-card">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                            <div className="question-text">Q: {q.text}</div>
+                            <button className="btn-delete" onClick={() => handleDeleteQuestion(q.id)}>✕</button>
+                          </div>
+                          {q.answer ? (
+                            <div>
+                              <textarea 
+                                value={q.answer}
+                                onChange={(e) => handleUpdateAnswer(q.id, e.target.value)}
+                                placeholder="Réponse..."
+                                style={{ marginTop: '8px' }}
+                              />
+                            </div>
+                          ) : (
+                            <textarea 
+                              onChange={(e) => handleUpdateAnswer(q.id, e.target.value)}
+                              placeholder="Réponse (après la visite)..."
+                              style={{ marginTop: '8px' }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="add-section">
+                    <h4>Ajouter une question</h4>
+                    <textarea 
+                      value={newQuestion}
+                      onChange={(e) => setNewQuestion(e.target.value)}
+                      placeholder="Ex: État du chauffage? Nuisances sonores?..."
+                      rows="2"
+                    />
+                    <button className="btn-save" disabled={!newQuestion.trim()} onClick={handleAddQuestion}>+ Ajouter question</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
 
       return (
         <div style={{ minHeight: '100vh', background: '#0f172a' }}>
@@ -301,8 +428,12 @@
                 <div className="daily-visits">
                   <h4>📅 Visites du {new Date(selectedDateForVisits).toLocaleDateString('fr-FR')}</h4>
                   {visitsToday.map((v, idx) => (
-                    <div key={idx} className="visit-item">
+                    <div key={idx} className="visit-item" onClick={() => {
+                      setSelectedAppart(apparts.find(a => a.id === v.apartId));
+                      setSelectedVisit(v);
+                    }}>
                       <span className="visit-time">{v.time}</span> - {v.apartRank} {v.apartName}
+                      {(v.questions || []).length > 0 && <span style={{ marginLeft: '8px', color: '#cbd5e1', fontSize: '12px' }}>({(v.questions || []).length} Q)</span>}
                     </div>
                   ))}
                 </div>
@@ -354,12 +485,13 @@
                   ) : (
                     <div className="visits-list">
                       {(selectedAppart.visits || []).sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).map((v, idx) => (
-                        <div key={idx} className="visit-card">
+                        <div key={idx} className="visit-card" onClick={() => setSelectedVisit(v)}>
                           <div className="visit-info">
                             <div className="visit-card-time">{v.time}</div>
                             <div style={{ fontSize: '12px', color: '#cbd5e1' }}>{new Date(v.date).toLocaleDateString('fr-FR')}</div>
+                            {(v.questions || []).length > 0 && <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px' }}>{(v.questions || []).length} question(s)</div>}
                           </div>
-                          <button className="btn-delete" onClick={() => handleDeleteVisit(idx)}>✕</button>
+                          <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDeleteVisit(idx); }}>✕</button>
                         </div>
                       ))}
                     </div>
