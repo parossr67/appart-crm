@@ -251,9 +251,19 @@
   const [apparts, setApparts] = useState(sortAndRankApparts(project.apparts || []));
   const [selectedAppart, setSelectedAppart] = useState(null);
 
-      return (
-        <div>
-          <p style={{ marginBottom: '20px', color: '#94a3b8' }}>{apparts.length} appart(s)</p>
+      const loadDefaultApparts = () => {
+  const defaultApparts = [
+    { id: 1, name: 'Esplanade F3 balcon', price: 162750, surface: 61, location: 'Esplanade', score: 9, notes: 'Meilleur combo', calls: [], visits: [] },
+    { id: 2, name: 'Neudorf 3P 62m²', price: 153000, surface: 62, location: 'Neudorf', score: 8.5, notes: 'Prix/m² imbattable', calls: [], visits: [] },
+  ];
+  setApparts(sortAndRankApparts(defaultApparts));
+};
+
+return (
+  <div>
+    <p style={{ marginBottom: '20px', color: '#94a3b8' }}>{apparts.length} appart(s)
+      {apparts.length === 0 && <button className="btn btn-primary" onClick={loadDefaultApparts} style={{marginLeft: '12px'}}>Charger les apparts</button>}
+    </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             {apparts.map(appart => (
               <div key={appart.id} className="card" onClick={() => setSelectedAppart(appart)} style={{ cursor: 'pointer', borderColor: selectedAppart?.id === appart.id ? '#d97706' : '#334155' }}>
