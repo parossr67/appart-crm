@@ -430,17 +430,80 @@ const [newForm, setNewForm] = useState({
               <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#fbbf24' }}>{appart.score}/10</div>
             </div>
 
-           <div style={{ background: '#0f172a', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ background: '#0f172a', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
                 <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.price.toLocaleString()}€</div></div>
                 <div><div style={{ fontSize: '11px', color: '#64748b' }}>Surface</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.surface}m²</div></div>
                 <div><div style={{ fontSize: '11px', color: '#64748b' }}>Prix/m²</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{Math.round(appart.price / appart.surface).toLocaleString()}€</div></div>
               </div>
-              {appart.address && <div><div style={{ fontSize: '11px', color: '#64748b' }}>Adresse</div><div style={{ marginTop: '4px' }}>{appart.address}</div></div>}
-              {appart.dpe && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>DPE</div><div style={{ fontWeight: 'bold', marginTop: '4px', color: '#fbbf24' }}>{appart.dpe}</div></div>}
-              {appart.ges && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>GES</div><div style={{ fontWeight: 'bold', marginTop: '4px' }}>{appart.ges}</div></div>}
-              {appart.yearBuilt && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>Année</div><div style={{ marginTop: '4px' }}>{appart.yearBuilt}</div></div>}
-              {appart.description && <div style={{ marginTop: '8px' }}><div style={{ fontSize: '11px', color: '#64748b' }}>Description</div><div style={{ marginTop: '4px', fontSize: '13px' }}>{appart.description}</div></div>}
+              
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>Adresse complète</label>
+                <input 
+                  className="input" 
+                  value={appart.address || ''} 
+                  onChange={e => onUpdate({ address: e.target.value })}
+                  placeholder="À remplir auprès de l'agent..."
+                />
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>DPE</label>
+                  <select 
+                    className="input" 
+                    value={appart.dpe || ''} 
+                    onChange={e => onUpdate({ dpe: e.target.value })}
+                  >
+                    <option value="">À déterminer</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>GES</label>
+                  <select 
+                    className="input" 
+                    value={appart.ges || ''} 
+                    onChange={e => onUpdate({ ges: e.target.value })}
+                  >
+                    <option value="">À déterminer</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>Année construction</label>
+                <input 
+                  className="input" 
+                  type="number" 
+                  value={appart.yearBuilt || ''} 
+                  onChange={e => onUpdate({ yearBuilt: e.target.value })}
+                  placeholder="À demander..."
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>Infos supplémentaires</label>
+                <textarea 
+                  className="textarea" 
+                  value={appart.description || ''} 
+                  onChange={e => onUpdate({ description: e.target.value })}
+                  placeholder="Notes de l'agence, infos particulières..."
+                />
+              </div>
             </div>
 
             <div style={{ marginBottom: '16px' }}>
