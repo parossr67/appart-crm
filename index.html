@@ -242,14 +242,14 @@
     }
 
     function ProjectView({ project }) {
-      const [apparts, setApparts] = useState(sortAndRankApparts(project.apparts || []));
-      const [selectedAppart, setSelectedAppart] = useState(null);
-
-      const sortAndRankApparts = (list) => {
-        const ranks = ['🥇', '🥈', '🥉'];
-        const getRank = (index) => ranks[index] || (index + 1).toString();
-        return [...list].sort((a, b) => b.score - a.score).map((a, idx) => ({ ...a, rank: getRank(idx) }));
-      };
+  const sortAndRankApparts = (list) => {
+    const ranks = ['🥇', '🥈', '🥉'];
+    const getRank = (index) => ranks[index] || (index + 1).toString();
+    return [...list].sort((a, b) => b.score - a.score).map((a, idx) => ({ ...a, rank: getRank(idx) }));
+  };
+  
+  const [apparts, setApparts] = useState(sortAndRankApparts(project.apparts || []));
+  const [selectedAppart, setSelectedAppart] = useState(null);
 
       return (
         <div>
